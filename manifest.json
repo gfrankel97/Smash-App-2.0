@@ -1,0 +1,7 @@
+{
+  "name": "Smash-App-2-0",
+  "short_name": "Smash-App-2-0",
+  "description": "Visual SSBM data  at your fingertips",
+  "start_url": "/",
+  "display": "standalone"
+}

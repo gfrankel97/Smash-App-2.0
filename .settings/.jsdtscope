@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|dist/js/|**/*.min.js" kind="src" path="bower_components/accessibility-developer-tools"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/accessibility-developer-tools/dist/js"/>
+	<classpathentry excluding="mocha_test/support/|deps/|dist/|**/bower_components/*|**/node_modules/*|perf/|support/|lib/|**/*.min.js|mocha_test/" kind="src" path="bower_components/async"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/async/deps"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/async/dist"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/async/lib"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|support/|**/*.min.js" kind="src" path="bower_components/async/mocha_test"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/async/mocha_test/support"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/async/perf"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/async/support"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/chai"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/lodash"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/mocha"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/polymer/externs"/>
+	<classpathentry excluding="examples/|**/bower_components/*|externs/|**/node_modules/*|**/*.min.js|src/|entrypoints/" kind="src" path="bower_components/shadycss"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/shadycss/entrypoints"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/shadycss/examples"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/shadycss/externs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/shadycss/src"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/sinon-chai/lib"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/sinon-chai/test"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/sinonjs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|lib/|**/*.min.js" kind="src" path="bower_components/stacky"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/stacky/lib"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/test-fixture"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js|data/" kind="src" path="bower_components/web-component-tester"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/web-component-tester/data"/>
+	<classpathentry excluding="**/bower_components/*|externs/|**/node_modules/*|tests/imports/|**/*.min.js|entrypoints/|src/" kind="src" path="bower_components/webcomponentsjs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/webcomponentsjs/entrypoints"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/webcomponentsjs/externs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/webcomponentsjs/src"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="bower_components/webcomponentsjs/tests/imports"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

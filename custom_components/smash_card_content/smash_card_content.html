@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../tiered_chip/tiered_chip.html">
+
+<dom-module id="smash-card-content">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+            }
+            tiered-chip {
+                margin-top: 6px;
+            }
+            .left_chip {
+                float: left;
+            }
+            .right_chip {
+                float: right;
+            }
+            .header {
+                padding: 0px;
+                height: 64px;
+            }
+            .card_header {
+                @apply --paper-font-headline;
+                text-align: center;
+            }
+            .collapse_icon {
+                padding-top: 0px;
+            }
+            #category_title {
+                display: inline-block;
+            }
+            
+
+        </style>
+            <div class="card_header" on-tap="collapse_tapped">
+                <tiered-chip id="tier_chip_one" class="left_chip" height="30" width="50" letter="[[ tier_chip_one_letter ]]"></tiered-chip>
+                <div id="category_title">{{ name }}</div>
+                <template is="dom-if" if="{{ collapse_opened }}"><paper-icon-button class="collapse_icon" icon="smash:chevron_up"></paper-icon-button></template>
+                <template is="dom-if" if="{{ !collapse_opened }}"><paper-icon-button class="collapse_icon" icon="smash:chevron_down"></paper-icon-button></template>
+                <tiered-chip id="tier_chip_two" class="right_chip" height="30" width="50" letter="[[ tier_chip_two_letter ]]"></tiered-chip>
+            </div>
+            <iron-collapse id="collapse">
+                <div class="collapse-content">
+                <slot name="collapse_content"></slot>
+                    <template is="dom-repeat" items="{{ collapse_categories }}" as="category">
+                        <div>{{ category }}</div>
+                    </template>
+                </div>
+            </iron-collapse>
+    </template>
+    <script>
+        Polymer({
+            is: 'smash-card-content',
+            
+            properties: {
+            	collapse_opened: {
+            		type: Boolean,
+            		value: false
+            	},
+            	collapse_categories: {
+            		type: Array,
+            		value: []
+            	},
+            	name: {
+            		type: String,
+            		value: ''
+            	},
+            	tier_chip_one_letter: {
+            	   type: String,
+            	   value: ''
+            	},
+            	tier_chip_two_letter: {
+                   type: String,
+                   value: ''
+                },
+                add_bottom_border: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            ready: function() {
+            	if(this.tier_chip_one_letter == '' && this.tier_chip_two_letter == '') {
+            	   this.$.tier_chip_one.style.display = 'none';
+            	   this.$.tier_chip_two.style.display = 'none';
+            	}
+            	if(this.add_bottom_border) {
+            	    this.style.borderBottom = '1px solid #E5E5E5';
+            	}
+            	else {
+            	    this.style.borderBottom = '';
+            	}
+            },
+
+            collapse_tapped: function() {
+            	this.$.collapse.toggle()
+            	this.collapse_opened = this.$.collapse.opened;
+            }
+        });
+    </script>
+</dom-module>

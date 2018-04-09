@@ -1,0 +1,113 @@
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../smash_card_content/smash_card_content.html">
+<link rel="import" href="../frame_scrubber/frame_scrubber.html">
+<link rel="import" href="../input_builder/input_builder.html">
+
+<dom-module id="move-comparison">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            paper-card {
+                width: 100%;
+            }
+            .move_one_image {
+                float: left;
+            }
+            .move_two_image {
+                float: right;
+            }
+            .shared_header_styles {
+                width: 50px;
+                margin-top: 15px;
+                display: inline-block;
+                font-size: 20px;
+            }
+            .shared_image_styles {
+                width: 30%;
+                height: 96px;
+            }
+            #move_one_header {
+                padding-left: 8px;
+                float: left;
+            }
+            #move_two_header {
+                float: right;
+                padding-right: 8px;
+            }
+            .header {
+                padding: 0px;
+                height: 96px;
+                border-bottom: 1px solid #E5E5E5;
+            }
+            .subheader {
+                padding-left: 8px;
+                padding-top: 14px;
+                height: 48px;
+                font-size: 20px;
+            }
+            #orientation_container {
+                width: 100%;
+                border-bottom: 1px solid #E5E5E5;
+                display: inline-flex;
+            }
+            smash-card-content {
+                display: block;
+            }
+        </style>
+        <paper-card>
+            <div class="card-content header">
+                <iron-image sizing="cover" class="shared_image_styles move_one_image" src="{{ move_one.move_comparison_image }}"></iron-image>
+                <div id="move_one_header" class="shared_header_styles">{{ move_one.name }}</div>
+
+                <iron-image sizing="cover" class="shared_image_styles move_two_image" src="{{ move_two.move_comparison_image }}"></iron-image>
+                <div id="move_two_header" class="shared_header_styles">{{ move_two.name }}</div>
+            </div>
+            <div id="orientation_container">
+                <div class="subheader">Orientation</div>
+                <div><paper-toggle-button></paper-toggle-button></div>
+            </div>
+            <smash-card-content class="card-content" name="Scrubber" add_bottom_border>
+                <frame-scrubber slot="collapse_content" class="card-content collapse-content"></frame-scrubber>
+            </smash-card-content>
+            <smash-card-content class="card-content" name="Inputs" add_bottom_border>
+                <input-builder slot="collapse_content" class="collapse-content card-content" inputs="{{ get_tech() }}"></input-builder>
+            </smash-card-content>
+        </paper-card>
+    </template>
+    <script>
+        Polymer({
+            is: 'move-comparison',
+            
+            properties: {
+                card_categories: {
+                   type: Array,
+                   value: []
+                },
+                move_one: {
+                    type: Object,
+                    value: {}
+                },
+                move_two: {
+                    type: Object,
+                    value: {}
+                }
+            },
+            
+            ready: function() {
+                this.move_one = {name: 'Up Tilt',
+                                 move_comparison_image: '../../images/moves/fox/uptilt.gif'};
+                this.move_two = {name: 'Forward Smash',
+                                 move_comparison_image: '../../images/moves/falco/fsmash.gif'};
+            },
+
+            
+            
+            get_tech: function() {
+                return {'Up Tilt': ['a + control_up']};
+            }
+        });
+    </script>
+</dom-module>

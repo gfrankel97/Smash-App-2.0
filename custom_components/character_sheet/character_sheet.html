@@ -1,0 +1,214 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../character_select/character_select.html">
+<link rel="import" href="../input_builder/input_builder.html">
+
+<dom-module id="character-sheet">
+    <template>
+        <style>
+            paper-card {
+                width: 100%;
+            }
+            .move_card:hover, .card_header:hover {
+                cursor: pointer;
+            }
+            .move_card {
+                width: 125px;
+            }
+            .move_header {
+                @apply --paper-font-headline;
+                font-size: 16px;
+                margin: 8px;
+            }
+            .card_header {
+                @apply --paper-font-headline;
+            }
+            .collapse_icon {
+                float: right;
+                padding-top: 0px;
+            }
+            .card-content {
+                border-bottom: 1px solid #E5E5E5;
+            }
+            .category_header {
+                padding: 8px;
+            }
+            paper-item {
+                --paper-item-selected-weight: normal;
+            }
+        </style>
+        <paper-card image="{{ character.character_select_image }}">
+            <div class="card-content">
+                <div class="card_header" id="character_moves" on-tap="moves_collapse_tapped">Moves
+                    <template is="dom-if" if="{{ moves_opened }}"><paper-icon-button class="collapse_icon" icon="smash:chevron_up" hidden="{{ opened }}"></paper-icon-button></template>
+                    <template is="dom-if" if="{{ !moves_opened }}"><paper-icon-button class="collapse_icon" icon="smash:chevron_down" hidden="{{ !opened }}"></paper-icon-button></template>
+                </div>
+                <iron-collapse id="moves">
+                    <template is="dom-repeat" items="[[ get_move_categories() ]]" as="category">
+                        <div class="category_header" on-tap="toggle_move_category">[[ category ]]
+                            <iron-collapse>
+                                <paper-listbox class="collapse-content">
+                                    <template is="dom-repeat" items="[[ get_moves_by_category(category) ]]" as="move">
+                                        <paper-item on-tap="move_tapped">[[ move.name ]]</paper-item>
+                                    </template>
+                                </paper-listbox>
+                            </iron-collapse>
+                        </div>
+                    </template>
+                </iron-collapse>
+            </div>
+            <div class="card-content">
+                <div class="card_header" id="specific_tech" on-tap="tech_collapse_tapped">Specific Tech
+                    <template is="dom-if" if="{{ tech_opened }}"><paper-icon-button class="collapse_icon" icon="smash:chevron_up" hidden="{{ opened }}"></paper-icon-button></template>
+                    <template is="dom-if" if="{{ !tech_opened }}"><paper-icon-button class="collapse_icon" icon="smash:chevron_down" hidden="{{ !opened }}"></paper-icon-button></template>
+                </div>
+                <iron-collapse id="tech">
+                    <template is="dom-if" if="{{ character }}">
+	                    <template is="dom-repeat" items="{{ character.tech }}" as="tech">
+	                        <div class="category_header">{{ get_tech_name() }}</div>
+	                        <input-builder inputs="{{ tech }}"></input-builder>
+	                    </template>
+	                </template>
+                </iron-collapse>
+            </div>
+        </paper-card>
+    </template>
+    <script>
+        Polymer({
+            is: 'character-sheet',
+            
+            properties: {
+            	character: {
+            		type: Object,
+            		value: {},
+            		observer: 'character_changed'
+            	},
+            	moves_opened: {
+            		type: Boolean,
+            		value: false,
+            	},
+            	moves_loaded: {
+                    type: Boolean,
+                    value: false,
+                },
+            	tech_opened: {
+            		type: Boolean,
+            		value: false
+            	},
+            	tech_loaded: {
+                    type: Boolean,
+                    value: false
+                },
+            	tech_counter: {
+            		type: Number,
+            		value: -1
+            	}
+            },
+
+            character_changed: function() {
+            	 if(this.character == null) {
+                     this.tech_counter = -1;
+           		     this.move_opened = false;
+           		     this.tech_opened = false;
+            	 }
+            },
+
+            moves_collapse_tapped: function(event) {
+            	this.$.moves.toggle();
+            	this.moves_opened = this.$.moves.opened;
+            	if(!this.moves_loaded) {
+            		this.get_character_moves_data();
+            	}
+            },
+
+            tech_collapse_tapped: function() {
+                this.$.tech.toggle();
+                this.tech_opened = this.$.tech.opened;
+                if(!this.tech_loaded) {
+                	this.get_character_tech_data();
+                }
+            },
+
+            get_tech_name: function() {
+            	this.tech_counter++;
+           		return Object.keys(this.character.tech[this.tech_counter])[0];
+            },
+
+            get_move_categories: function() {
+                return ['Smash Attacks','Special Attacks', 'Aerials', 'Tilts', 'Grabs','Defensive'];
+            },
+
+            get_moves_by_category: function(category) {
+                var to_return = [];
+                var name_to_category = {
+                    'Smash': 'Smash Attacks',
+                    'B': 'Special Attacks',
+                    'Air': 'Aerials',
+                    'Tilt': 'Tilts',
+                    'Throw': 'Grabs'
+                }
+                for(var i=0; i < this.character.moves.length; i++) {
+                    var identifier = this.character.moves[i].name.split(' ')[this.character.moves[i].name.split(' ').length - 1];
+                    
+                    if(category == name_to_category[identifier]) {
+                        to_return.push(this.character.moves[i]);
+                    }
+                }
+                return to_return;
+            },
+
+            get_character_moves_data: function() {
+//              var xhttp = new XMLHttpRequest();
+//              xhttp.open('GET', 'http://heimdallmelee.azurewebsites.net/api/character/' + this.character.name '/moves', true);
+//              xhttp.onreadystatechange = function() {
+//                  if(xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
+//                      var returned_moves = xhttp.responseText;
+                        
+                        
+//                  }
+//              }
+//              xhttp.send();
+            },
+
+            get_character_tech_data: function() {
+//              var xhttp = new XMLHttpRequest();
+//              xhttp.open('GET', 'http://heimdallmelee.azurewebsites.net/api/character/' + this.character.name '/tech', true);
+//              xhttp.onreadystatechange = function() {
+//                  if(xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
+//                      var returned_moves = xhttp.responseText;
+                        
+                        
+//                  }
+//              }
+//              xhttp.send();
+            	this.tech_loaded = true;
+            },
+
+            toggle_move_category: function(event) {
+                var collapse = event.target.querySelector('iron-collapse');
+                collapse.toggle();
+                if(collapse.opened) {
+                    event.target.style.fontWeight = 'bold';
+                }
+                else {
+                    event.target.style.fontWeight = 'normal';
+                }
+                
+            },
+
+            move_tapped: function(event) {
+            	var move = event.model.__data.move;
+            	move.character = this.character.name;
+            	move.b_moves = this.character.b_moves;
+            	this.fire('set_view', {view: 'move_sheet', character: this.character.name, move: move})
+            }
+        });
+    </script>
+</dom-module>

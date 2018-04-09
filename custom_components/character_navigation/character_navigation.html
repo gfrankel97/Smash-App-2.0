@@ -1,0 +1,229 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../character_select/character_select.html">
+<link rel="import" href="../character_sheet/character_sheet.html">
+<link rel="import" href="../character_matchup/character_matchup.html">
+<link rel="import" href="../move_comparison/move_comparison.html">
+<link rel="import" href="../move_sheet/move_sheet.html">
+<link rel="import" href="../styles/icons.html">
+
+
+<dom-module id="character-navigation">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            app-header {
+                height: 64px;
+                background-color: var(--paper-grey-600);
+                color: white;
+            }
+            app-drawer {
+                z-index: 10;
+            }
+            #search_button {
+               right: 8px;
+               position: absolute;
+               height: 40px;
+
+            }
+            #toolbar_text {
+               font-size: 32px;
+               margin-top: 12px;
+               margin-left: 8px;
+               font-family: "Roboto";
+	        }
+	        #toolbar_text:hover {
+	           cursor:default;
+	        }
+            #secondary_toolbar_text {
+                font-size: 16px;
+                margin: auto;
+                padding-left: 16px;
+            }
+	        #drawer_div {
+	            height: 100%;
+	            overflow: auto;
+	            background-color: var(--paper-grey-600);
+	            color: white;
+	        }
+	        .toolbar_button {
+               margin-top: 12px;
+               margin-bottom: 12px;
+	        }
+        </style>
+
+        <iron-media-query query="(max-width: 450px)" query-matches="{{ is_mobile }}"></iron-media-query>
+        <app-header id="menu_toolbar" reveals>
+            <app-toolbar>
+                <div class="layout horizontal wrap">
+                    <paper-icon-button id="menu_button" icon="smash:menu" class="toolbar_button" on-tap="toggle_drawer"></paper-icon-button>
+                    <div main-title id="toolbar_text">{{ toolbar_text }}</div>
+                    <div id="secondary_toolbar_text">{{ secondary_toolbar_text }}</div>
+                    <paper-icon-button id="search_button" icon="smash:search"class="toolbar_button"></paper-icon-button>
+                </div>
+            </app-toolbar>
+        </app-header>
+        <app-drawer id="navigation_drawer">
+             <div id="drawer_div">
+                <div role="listbox">
+				    <paper-item id='character_select' on-tap="set_view">Character Select</paper-item>
+				    <paper-item id='character_matchup' on-tap="set_view">Character Matchup</paper-item>
+                    <paper-item id='move_sheet' on-tap="set_view">Move Data</paper-item>
+                    <paper-item id='move_comparison' on-tap="set_view">Move Comparison</paper-item>
+				</div>
+             </div>
+        </app-drawer>
+        <template is="dom-if" if="{{ character_select_bool }}">
+            <character-select id="character_select" is_mobile="{{ is_mobile }}"></character-select>
+        </template>
+        <template is="dom-if" if="{{ character_sheet_bool }}">
+            <character-sheet tech_counter="{{ tech_counter }}" class="character_sheet" character="{{ character }}"></character-sheet>
+        </template>
+        <template is="dom-if" if="{{ character_matchup_bool }}">
+            <character-matchup character_one="{{ character_one }}" character_two="{{ character_two }}"></character-matchup>
+       </template>
+       <template is="dom-if" if="{{ move_comparison_bool }}">
+            <move-comparison></move-comparison>
+       </template>
+       <template is="dom-if" if="{{ move_sheet_bool }}">
+            <move-sheet move="{{ move_sheet_move }}"></move-sheet>
+       </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'character-navigation',
+            
+            properties: {
+                is_mobile: {
+                    type: Boolean,
+                    value: false
+                },
+                character: {
+                    type: String,
+                    value: null
+                },
+                toolbar_text: {
+                	type: String,
+                	value: 'SSBM Vault'
+                },
+                secondary_toolbar_text: {
+                	type: String,
+                	value: ''
+                },
+                character_select_bool: {
+                	type: Boolean,
+                	value: false,
+                },
+                character_sheet_bool: {
+                    type: Boolean,
+                    value: false,
+                },
+                character_matchup_bool: {
+                    type: Boolean,
+                    value: false,
+                },
+                move_comparison_bool: {
+                	type: Boolean,
+                	value: false
+                },
+                move_sheet_bool: {
+                	type: Boolean,
+                    value: false
+                }
+            },
+
+            listeners: {
+            	'set_view': 'set_view',
+                'character_selected': 'character_selected',
+                'change_toolbar_text': 'change_toolbar_text',
+                'set_character_matchup_view': 'set_character_matchup_view'
+            },
+
+            ready: function() {
+            	this.character_select_bool = true;
+            },
+            
+            set_view: function(event) {
+            	var to_view = '';
+            	this.$.navigation_drawer.close();
+            	if(typeof(event) == 'string') {
+            		to_view = event;
+            	}
+            	else if(event.detail.view) {
+            	    to_view = event.detail.view;
+            	}
+            	else {
+            		to_view = event.target.id;
+            	}
+            	this.character_select_bool = false;
+                this.character_sheet_bool = false;
+                this.character_matchup_bool = false;
+                this.move_comparison_bool = false;
+                this.move_sheet_bool = false;
+                this.tech_counter = -1;
+                this.character = null;
+                this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
+                switch (to_view) {
+                	case 'character_select':
+                        this.character_select_bool = true;
+                        this.character = null;
+                		break;
+                	case 'character_sheet':
+                		this.character_sheet_bool = true;
+                		break;
+                	case 'character_matchup':
+                		this.character_matchup_bool = true;
+                		this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
+                		//if(event.detail.character_one && event.detail.character_two) {
+                        if(true) {
+                            //this.character_one = event.detail.character_one;
+                            //this.character_two = event.detail.character_two;
+                            this.character_one = {};
+                            this.character_two = {};
+                            this.character_one.name = 'Fox';
+                            this.character_two.name = 'Falco';
+                            this.character_one.character_sheet_image = '../../images/character_select_images/fox.jpg';
+                            this.character_two.character_sheet_image = '../../images/character_select_images/falco.jpg';
+                        }
+                        else {
+                            this.character_one = 'dummy';
+                            this.character_two = 'dummy';
+                        }
+                		break;
+                	case 'move_comparison':
+                		this.move_comparison_bool = true;
+                		break;
+                	case 'move_sheet':
+                		this.move_sheet_move = event.detail.move;
+                        this.move_sheet_bool = true;
+                        break;
+                	default:
+                		this.character_select_bool = true;
+                        break;
+                }
+                
+            },
+
+            toggle_drawer: function() {
+                this.$.navigation_drawer.toggle();
+            },
+
+            change_toolbar_text: function(event) {
+            	this.toolbar_text = event.detail.primary;
+            	this.secondary_toolbar_text = ((event.detail.secondary !== undefined) || (event.detail.secondary !== '')) ? event.detail.secondary : '';
+            },
+
+            character_selected: function(event) {
+            	this.set_view('character_sheet');
+                this.character = event.detail;
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- <link rel="import" href="../../images/gcc_buttons/a.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/b.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/r.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/l.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/control_down_right.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/control_down_left.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/y.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/x.png"> -->
+<!-- <link rel="import" href="../../images/gcc_buttons/plus.png"> -->
+
+<dom-module id="input-builder">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            #input_builder_div {
+                margin: 0 auto;
+            }
+            img {
+                width:40px;
+                height: 40px;
+                padding: 4px;
+            }
+            .plus {
+                width: 20px;
+                height: 20px;
+                margin: auto 0px;
+                padding: 0px;
+            }
+            .comma {
+                margin: auto 0px;
+                font-size: 200%;
+            }
+        </style>
+
+        <div id="input_builder_div" class="layout horizontal wrap">
+            <template is="dom-repeat" items="{{ inputs }}" as="input">
+                <template is="dom-if" if="{{ is_simulataneous_input(input) }}">
+                    <template is="dom-repeat" items="{{ get_separate_buttons(input) }}" as="button">
+                        <img src="{{ get_button_source(button) }}">
+                        <template is="dom-if" if="{{ !is_last_button_item(input, button) }}">
+                            <img class="plus" src=" ../../images/gcc_buttons/plus.png">
+                        </template>
+                    </template>
+                </template>
+                <template is="dom-if" if="{{ !is_simulataneous_input(input) }}">
+                    <img src="{{ get_button_source(input) }}">
+                </template>
+                <div class="comma" hidden="{{ is_last_comma_item(inputs, input) }}">,</div>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'input-builder',
+            
+            properties: {
+                inputs: {
+                	type: Array,
+                	value: []
+                },
+                formatted_inputs: {
+                	type: Array,
+                	value: []
+                }
+            },
+
+            is_array: function(obj) {
+            	return Array.isArray(obj);
+            },
+
+            is_last_button_item: function(arr, element) {
+                var arr = this.get_separate_buttons(arr);
+            	if(arr[arr.length - 1] == element) {
+            		return true;
+            	}
+            	else {
+            		return false;
+            	}
+            },
+
+            is_last_comma_item: function(arr, element) {
+                if(arr[arr.length - 1] == element) {
+                	return true;
+                }
+                else {
+                	return false;
+                }
+            },
+
+            is_simulataneous_input: function(string) {
+                return (string.indexOf('+') !== -1);
+            },
+
+            get_button_source: function(button_string) {
+                return '../../images/gcc_buttons/' + button_string + '.png'
+            },
+            
+            get_separate_buttons: function(input) {
+                var buttons = input.split(' + ');
+                return buttons;
+            },
+
+            get_combined_inputs_array: function(input) {
+                var separate_inputs = input.split(' + ');
+                return separate_inputs;
+            },
+            
+            get_combined_source: function(obj) {
+            	return '../../images/gcc_buttons/' + obj + '.png';
+            }
+        });
+    </script>
+</dom-module>

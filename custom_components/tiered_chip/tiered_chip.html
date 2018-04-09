@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="tiered-chip">
+    <template>
+        <style>
+            paper-item {
+                background-color: #aef1c2;
+            }
+            #letter {
+                background-color: #aef1c2;
+                display: inline-block;
+                text-align: center;
+            }
+        </style>
+        <div id="letter">{{ letter }}</div>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'tiered-chip',
+            
+            properties: {
+            	letter: {
+            		type: String,
+            		value: ''
+            	},
+                width: {
+                	type: Number,
+                	value: null
+                },
+                height: {
+                    type: Number,
+                    value: null
+                },
+                green_color: {
+                	type: String,
+                	value: '#aef1c2'
+                },
+                red_color: {
+                	type: String,
+                	value: '#f1a5ae'
+                }
+            },
+
+            ready: function() {
+                this.$.letter.style.width = this.width + 'px';
+                this.$.letter.style.height = this.height + 'px';
+            }
+        });
+    </script>
+</dom-module>

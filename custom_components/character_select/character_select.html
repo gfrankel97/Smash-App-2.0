@@ -1,0 +1,115 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+
+<script type="text/javascript" src="../../js/character_json_parser.js"></script>
+
+<dom-module id="character-select">
+    <template>
+	    <style is="custom-style" include="iron-flex iron-flex-alignment">
+		    .character_card {
+		        display: inline-block;
+		        text-align: left;
+		        max-height: 200px;
+		        width: 150px;
+		        margin: 4px;
+		        --paper-card-background-color: white;
+		        --paper-card-header-image: {
+		          --iron-image-height: 100px;
+		        }
+		    }
+		    .character_card:hover {
+		      cursor: pointer;
+		    }
+		    .character_text {
+		        @apply --paper-font-headline;
+		        padding: 0px;
+		        margin: 8px;
+		    }
+ 			#centerer {
+ 			   display: flex;
+                justify-content: center;
+ 			}
+	    </style>
+	    <div id="centerer" class="layout horizontal wrap">
+            <template is="dom-repeat" items="{{ characters }}" as="character">
+	            <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
+	                <div class="card-content character_text">{{ get_display_name(character.name) }}</div>
+	            </paper-card>
+	        </template>
+	    </div>
+    </template>
+    <script>
+	    Polymer({
+	        is: 'character-select',
+	        
+	        properties: {
+	        	characters: {
+	        		type: Array,
+	        		value: []
+	        	},
+	        	is_mobile: {
+	        		type: Boolean,
+	        		value: false
+	        	}
+	        },
+	
+	        
+	        ready: function() {
+	            this.load();
+	        },
+	
+	        load: function() {
+	        	this.get_character_data();
+	        },
+	
+	        get_character_data: function() {
+// 	        	'http://heimdallmelee.azurewebsites.net/api/character/'
+                load_character_data().then(function(characters) {
+                    for(var key in characters) {
+                        characters[key].character_select_image = '../../images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg';
+                        this.push('characters', characters[key]);
+                    }
+                    console.log(this.characters)
+                }.bind(this));
+	        
+// 	        	this.push('characters', {name: 'Fox',
+// 	        		                     character_select_image: '../../images/character_select_images/fox.jpg',
+// 	        		                     tech: [
+// 	        		                    	 {'Waveshine': ['control_down + b','y', 'control_down_right + r']}
+// 	        		                     ]
+// 	        		                     });
+	        },
+
+	        convert_to_filename: function(name) {
+                name = name.replace('.', '');
+                name = name.replace(' ', '_');
+                name = name.toLowerCase();
+                return name;
+	        },
+
+	        get_display_name: function(name) {
+	            name = name.replace('_', ' ');
+	            name = name.replace('_', ' ');
+	            name = name.replace('mr', 'Mr.');
+	            name = name.replace('dr', 'Dr.');
+	            name = name.charAt(0).toUpperCase() + name.slice(1);
+	            var index = name.indexOf(' ');
+	            if(index !== -1) {
+	                name = name.slice(0, index) + ' ' + name.charAt(index + 1).toUpperCase() + name.slice(index + 2);
+                };
+	            if(name == 'Mr. game and watch') { name = 'Mr. Game and Watch'; }
+	            if(name == 'D K') { name = 'Donkey Kong'; }
+	            if(name == 'Samus Aran') { name = 'Samus'; }
+	            return name;
+	        },
+
+	        character_tapped: function(event) {
+	        	this.fire('character_selected', event.model.character);
+	        }
+	    });
+    </script>
+</dom-module>

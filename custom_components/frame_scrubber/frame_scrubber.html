@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../styles/icons.html">
+
+
+<dom-module id="frame-scrubber">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            :host {
+                display: flex;
+            }
+        
+            paper-slider {
+                width: calc(100% - 40px);
+                height: 70px;
+                margin-right: 8px;
+                --paper-slider-knob-start-color: var(--google-blue-700);
+                --paper-slider-knob-start-border-color: var(--google-blue-700);
+                --paper-slider-pin-start-color: var(--google-blue-700);
+            }
+
+            paper-icon-button {
+                margin: 6px;
+                margin-top: 15px;
+            }
+        </style>
+
+        <paper-icon-button id="play_pause_icon" icon="smash:pause" on-tap="play_pause_tapped"></paper-icon-button>
+        <paper-slider id="scrubber" pin snaps max="{{ total_frames }}" value="[[ current_frame ]]" on-change="drag_end" on-immediate-value-change="scrubber_value_changed"></paper-slider>
+    </template>
+    <script>
+        Polymer({
+            is: 'frame-scrubber',
+            
+            properties: {
+            	total_frames: {
+            	    type: Number,
+            	    value: -1,
+            	    observer: 'total_frames_changed'
+            	},
+            	current_frame: {
+            	    type: Number,
+            	    value: -1,
+            	    observer: 'current_frame_changed'
+            	}
+            },
+
+            ready: function() {
+            },
+
+            total_frames_changed: function() {
+                if(this.total_frames == -1) {
+                    this.$.scrubber.disabled = true;
+                }
+                else {
+                    this.$.scrubber.max = this.total_frames;
+                    this.$.scrubber.disabled = false;
+                    this.$.play_pause_icon.icon = 'smash:pause';
+                    
+                }
+            },
+
+            drag_end: function(event) {
+                this.$.play_pause_icon.icon = 'smash:play';
+            },
+
+            current_frame_changed: function() {
+                
+            },
+
+            scrubber_value_changed: function(event) {
+                this.fire('current_frame_changed', this.$.scrubber.immediateValue)
+            },
+
+            play_pause_tapped: function() {
+                this.fire('play_pause_tapped', {});
+            },
+
+            toggle_play_pause_icon: function() {
+                this.$.play_pause_icon.icon = this.$.play_pause_icon.icon == 'smash:play' ? 'smash:pause' : 'smash:play';
+            }
+        });
+    </script>
+</dom-module>

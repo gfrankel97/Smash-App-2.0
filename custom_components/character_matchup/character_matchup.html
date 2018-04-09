@@ -1,0 +1,112 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../tiered_chip/tiered_chip.html">
+<link rel="import" href="../smash_card_content/smash_card_content.html">
+
+<dom-module id="character-matchup">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            paper-card {
+                width: 100%;
+            }
+            .character_one_image {
+                float: left;
+            }
+            .character_two_image {
+                float: right;
+            }
+            .shared_header_styles {
+                width: 50px;
+                margin-top: 15px;
+                display: inline-block;
+                font-size: 20px;
+            }
+            #character_one_header {
+                padding-left: 8px;
+                float: left;
+            }
+            #character_two_header {
+                float: right;
+                padding-right: 8px;
+            }
+            .shared_image_styles {
+                width: 25%;
+                height: 64px;
+            }
+            .header {
+                padding: 0px;
+                height: 64px;
+            }
+            .collapse_icon {
+                float: right;
+                padding-top: 0px;
+            }
+            .card-content {
+                border-bottom: 1px solid #E5E5E5;
+            }
+        </style>
+
+        <paper-card>
+            <div class="card-content header">
+                <iron-image sizing="cover" class="shared_image_styles character_one_image" src="{{ character_one.character_sheet_image }}"></iron-image>
+                <div id="character_one_header" class="shared_header_styles">
+                    {{ character_one.name }}
+                </div>
+                
+                <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_sheet_image }}"></iron-image>
+                <div id="character_two_header" class="shared_header_styles">
+                    {{ character_two.name }}
+                </div>
+            </div>
+            <div class="card-content">
+                <smash-card-content name="Speed" collapse_categories="[[ get_speed_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
+            </div>
+            <div class="card-content">
+                <smash-card-content name="Punish" collapse_categories="[[ get_punish_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
+            </div>
+            <div class="card-content">
+                <smash-card-content name="Defense" collapse_categories="[[ get_defense_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
+            </div>
+        </paper-card>
+    </template>
+    <script>
+        Polymer({
+            is: 'character-matchup',
+            
+            properties: {
+            	character_one: {
+            		type: Object,
+            		value: {},
+            		observer: 'character_one_changed'
+            	},
+                character_two: {
+                    type: Object,
+                    value: {},
+                    observer: 'character_two_changed'
+                }
+            },
+
+            ready: function() {
+            },
+
+            character_one_changed: function() {
+            },
+
+            character_two_changed: function() {
+            },
+            
+            get_speed_categories: function() {
+                return ['Dash Speed','Fall Speed', 'Jump Squat', 'Aerial Drift'];
+            },
+
+            get_punish_categories: function() {
+            	return ['Launchers', 'Edgeguards'];
+            },
+            
+            get_defense_categories: function() {
+                return ['Out of Shield', 'Shield Size'];
+            }
+        });
+    </script>
+</dom-module>
