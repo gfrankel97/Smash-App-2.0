@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <link rel="import" href="../character_select/character_select.html">
 <link rel="import" href="../character_sheet/character_sheet.html">
@@ -26,6 +27,14 @@
             }
             app-drawer {
                 z-index: 10;
+            }
+            paper-icon-button {
+                color: var(--paper-grey-600);
+            }
+            #close_search_button {
+                right: 40px;
+                position: absolute;
+                height: 40px;
             }
             #search_button {
                right: 8px;
@@ -53,36 +62,58 @@
 	            background-color: var(--paper-grey-600);
 	            color: white;
 	        }
+            #toolbar_div {
+                height: 64px;
+                width:100%;
+            }
 	        .toolbar_button {
                margin-top: 12px;
                margin-bottom: 12px;
 	        }
+            paper-input {
+                width: 65%;
+                --paper-input-container-underline-focus: {
+                    border-color: white;
+                }
+                --paper-input-container: {
+                    padding-top: 0px;
+                };
+                --paper-input-container-input: {
+                    color: white;
+                }
+            }
         </style>
 
         <iron-media-query query="(max-width: 450px)" query-matches="{{ is_mobile }}"></iron-media-query>
         <app-header id="menu_toolbar" reveals>
             <app-toolbar>
-                <div class="layout horizontal wrap">
+                <div id="toolbar_div" class="layout horizontal wrap">
                     <paper-icon-button id="menu_button" icon="smash:menu" class="toolbar_button" on-tap="toggle_drawer"></paper-icon-button>
-                    <div main-title id="toolbar_text">{{ toolbar_text }}</div>
-                    <div id="secondary_toolbar_text">{{ secondary_toolbar_text }}</div>
-                    <paper-icon-button id="search_button" icon="smash:search"class="toolbar_button"></paper-icon-button>
+                    <template is="dom-if" if="[[ !searching ]]">
+                        <div main-title id="toolbar_text">{{ toolbar_text }}</div>
+                        <div id="secondary_toolbar_text">{{ secondary_toolbar_text }}</div>
+                    </template>
+                    <paper-icon-button id="search_button" icon="smash:search" class="toolbar_button" on-tap="open_search"></paper-icon-button>
+                    <paper-input id="search_input" on-keyup="search" tabindex="0" hidden="[[ !searching ]]"></paper-input>
+                    <template is="dom-if" if="[[ searching ]]">
+                        <paper-icon-button id="close_search_button" icon="smash:close" class="toolbar_button" on-tap="close_search"></paper-icon-button>
+                    </template>
                 </div>
             </app-toolbar>
         </app-header>
         <app-drawer id="navigation_drawer">
              <div id="drawer_div">
                 <div role="listbox">
-				    <paper-item id='character_select' on-tap="set_view">Character Select</paper-item>
-				    <paper-item id='character_matchup' on-tap="set_view">Character Matchup</paper-item>
-                    <paper-item id='move_sheet' on-tap="set_view">Move Data</paper-item>
-                    <paper-item id='move_comparison' on-tap="set_view">Move Comparison</paper-item>
+				    <paper-item id='character_select_list_item' on-tap="set_view">Character Select</paper-item>
+				    <paper-item id='character_matchup_list_item' on-tap="set_view">Character Matchup</paper-item>
+                    <paper-item id='move_sheet_list_item' on-tap="set_view">Move Data</paper-item>
+                    <paper-item id='move_comparison_list_item' on-tap="set_view">Move Comparison</paper-item>
 				</div>
              </div>
         </app-drawer>
-        <template is="dom-if" if="{{ character_select_bool }}">
-            <character-select id="character_select" is_mobile="{{ is_mobile }}"></character-select>
-        </template>
+<!--         <template is="dom-if" if="{{ character_select_bool }}"> -->
+            <character-select id="character_select" is_mobile="{{ is_mobile }}" hidden="[[ !character_select_bool ]]"></character-select>
+<!--         </template> -->
         <template is="dom-if" if="{{ character_sheet_bool }}">
             <character-sheet tech_counter="{{ tech_counter }}" class="character_sheet" character="{{ character }}"></character-sheet>
         </template>
@@ -136,6 +167,10 @@
                 move_sheet_bool: {
                 	type: Boolean,
                     value: false
+                },
+                searching: {
+                    type: Boolean,
+                    value: false
                 }
             },
 
@@ -170,6 +205,7 @@
                 this.tech_counter = -1;
                 this.character = null;
                 this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
+                this.close_search();
                 switch (to_view) {
                 	case 'character_select':
                         this.character_select_bool = true;
@@ -208,7 +244,6 @@
                 		this.character_select_bool = true;
                         break;
                 }
-                
             },
 
             toggle_drawer: function() {
@@ -223,6 +258,23 @@
             character_selected: function(event) {
             	this.set_view('character_sheet');
                 this.character = event.detail;
+            },
+
+            open_search: function() {
+                this.searching = true;
+                setTimeout(function() {
+                    this.$.search_input.$.input.querySelector('#nativeInput').focus();
+                }.bind(this), 1)
+            },
+
+            close_search: function() {
+                this.searching = false;
+                this.$.search_input.value = '';
+                this.search();
+            },
+
+            search: function(event) {
+                this.$.character_select.filter_characters(this.$.search_input.value);
             }
         });
     </script>

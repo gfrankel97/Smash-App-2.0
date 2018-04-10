@@ -73,7 +73,8 @@
                         characters[key].character_select_image = '../../images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg';
                         this.push('characters', characters[key]);
                     }
-                    console.log(this.characters)
+                    this.all_characters = this.characters;
+                    //console.log(this.characters)
                 }.bind(this));
 	        
 // 	        	this.push('characters', {name: 'Fox',
@@ -109,6 +110,16 @@
 
 	        character_tapped: function(event) {
 	        	this.fire('character_selected', event.model.character);
+	        },
+	        
+	        filter_characters: function(input) {
+	            var characters = [];
+	            for(var i=0; i < this.all_characters.length; i++) {
+	                if(this.all_characters[i].name.toLowerCase().includes(input.toLowerCase())) {
+	                    characters.push(this.all_characters[i]);
+	                }
+	            }
+	            this.set('characters', characters);
 	        }
 	    });
     </script>
