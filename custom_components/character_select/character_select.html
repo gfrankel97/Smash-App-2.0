@@ -9,118 +9,118 @@
 
 <dom-module id="character-select">
     <template>
-	    <style is="custom-style" include="iron-flex iron-flex-alignment">
-		    .character_card {
-		        display: inline-block;
-		        text-align: left;
-		        max-height: 200px;
-		        width: 150px;
-		        margin: 4px;
-		        --paper-card-background-color: white;
-		        --paper-card-header-image: {
-		          --iron-image-height: 100px;
-		        }
-		    }
-		    .character_card:hover {
-		      cursor: pointer;
-		    }
-		    .character_text {
-		        @apply --paper-font-headline;
-		        padding: 0px;
-		        margin: 8px;
-		    }
- 			#centerer {
- 			   display: flex;
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            .character_card {
+                display: inline-block;
+                text-align: left;
+                max-height: 200px;
+                width: 150px;
+                margin: 4px;
+                --paper-card-background-color: white;
+                --paper-card-header-image: {
+                  --iron-image-height: 100px;
+                }
+            }
+            .character_card:hover {
+              cursor: pointer;
+            }
+            .character_text {
+                @apply --paper-font-headline;
+                padding: 0px;
+                margin: 8px;
+            }
+             #centerer {
+                display: flex;
                 justify-content: center;
- 			}
-	    </style>
-	    <div id="centerer" class="layout horizontal wrap">
+             }
+        </style>
+        <div id="centerer" class="layout horizontal wrap">
             <template is="dom-repeat" items="{{ characters }}" as="character">
-	            <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
-	                <div class="card-content character_text">{{ get_display_name(character.name) }}</div>
-	            </paper-card>
-	        </template>
-	    </div>
+                <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
+                    <div class="card-content character_text">{{ get_display_name(character.name) }}</div>
+                </paper-card>
+            </template>
+        </div>
     </template>
     <script>
-	    Polymer({
-	        is: 'character-select',
-	        
-	        properties: {
-	        	characters: {
-	        		type: Array,
-	        		value: []
-	        	},
-	        	is_mobile: {
-	        		type: Boolean,
-	        		value: false
-	        	}
-	        },
-	
-	        
-	        ready: function() {
-	            this.load();
-	        },
-	
-	        load: function() {
-	        	this.get_character_data();
-	        },
-	
-	        get_character_data: function() {
-// 	        	'http://heimdallmelee.azurewebsites.net/api/character/'
+        Polymer({
+            is: 'character-select',
+
+            properties: {
+                characters: {
+                    type: Array,
+                    value: []
+                },
+                is_mobile: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+
+            ready: function() {
+                this.load();
+            },
+
+            load: function() {
+                this.get_character_data();
+            },
+
+            get_character_data: function() {
+//                 'http://heimdallmelee.azurewebsites.net/api/character/'
                 load_character_data().then(function(characters) {
                     for(var key in characters) {
-                        characters[key].character_select_image = '../../images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg';
+                        characters[key].character_select_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg' + '?sv=2018-03-28&ss=f&srt=co&sp=r&st=2019-01-03T04%3A22%3A55Z&se=2019-04-04T04%3A22%3A00Z&sig=%2F1i7SsE%2FAqLKuGILJUrMZMfRwPE5DhufwFxow70rQgQ%3D';
                         this.push('characters', characters[key]);
                     }
                     this.all_characters = this.characters;
-                    //console.log(this.characters)
+                    console.log(this.characters)
                 }.bind(this));
-	        
-// 	        	this.push('characters', {name: 'Fox',
-// 	        		                     character_select_image: '../../images/character_select_images/fox.jpg',
-// 	        		                     tech: [
-// 	        		                    	 {'Waveshine': ['control_down + b','y', 'control_down_right + r']}
-// 	        		                     ]
-// 	        		                     });
-	        },
 
-	        convert_to_filename: function(name) {
+//                 this.push('characters', {name: 'Fox',
+//                                          character_select_image: '../../images/character_select_images/fox.jpg',
+//                                          tech: [
+//                                              {'Waveshine': ['control_down + b','y', 'control_down_right + r']}
+//                                          ]
+//                                          });
+            },
+
+            convert_to_filename: function(name) {
                 name = name.replace('.', '');
                 name = name.replace(' ', '_');
                 name = name.toLowerCase();
                 return name;
-	        },
+            },
 
-	        get_display_name: function(name) {
-	            name = name.replace('_', ' ');
-	            name = name.replace('_', ' ');
-	            name = name.replace('mr', 'Mr.');
-	            name = name.replace('dr', 'Dr.');
-	            name = name.charAt(0).toUpperCase() + name.slice(1);
-	            var index = name.indexOf(' ');
-	            if(index !== -1) {
-	                name = name.slice(0, index) + ' ' + name.charAt(index + 1).toUpperCase() + name.slice(index + 2);
+            get_display_name: function(name) {
+                name = name.replace('_', ' ');
+                name = name.replace('_', ' ');
+                name = name.replace('mr', 'Mr.');
+                name = name.replace('dr', 'Dr.');
+                name = name.charAt(0).toUpperCase() + name.slice(1);
+                var index = name.indexOf(' ');
+                if(index !== -1) {
+                    name = name.slice(0, index) + ' ' + name.charAt(index + 1).toUpperCase() + name.slice(index + 2);
                 };
-	            if(name == 'Mr. game and watch') { name = 'Mr. Game and Watch'; }
-	            if(name == 'D K') { name = 'Donkey Kong'; }
-	            if(name == 'Samus Aran') { name = 'Samus'; }
-	            return name;
-	        },
+                if(name == 'Mr. game and watch') { name = 'Mr. Game and Watch'; }
+                if(name == 'D K') { name = 'Donkey Kong'; }
+                if(name == 'Samus Aran') { name = 'Samus'; }
+                return name;
+            },
 
-	        character_tapped: function(event) {
-	        	this.fire('character_selected', event.model.character);
-	        },
-	        
-	        filter_characters: function(input) {
-	            var characters = [];
-	            for(var i=0; i < this.all_characters.length; i++) {
-	                if(this.all_characters[i].name.toLowerCase().includes(input.toLowerCase())) {
-	                    characters.push(this.all_characters[i]);
-	                }
-	            }
-	            this.set('characters', characters);
-	        }
-	    });
+            character_tapped: function(event) {
+                this.fire('character_selected', event.model.character);
+            },
+
+            filter_characters: function(input) {
+                var characters = [];
+                for(var i=0; i < this.all_characters.length; i++) {
+                    if(this.all_characters[i].name.toLowerCase().includes(input.toLowerCase())) {
+                        characters.push(this.all_characters[i]);
+                    }
+                }
+                this.set('characters', characters);
+            }
+        });
     </script>
 </dom-module>

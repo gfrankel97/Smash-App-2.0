@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 
+<link rel="import" href="../behaviors/gif_behavior.html">
 <link rel="import" href="../smash_card_content/smash_card_content.html">
 <link rel="import" href="../frame_scrubber/frame_scrubber.html">
 <link rel="import" href="../input_builder/input_builder.html">
@@ -17,9 +18,17 @@
 
             #move_name {
                 font-size: 24px;
-                width: 100%;
                 border-bottom: 1px solid rgb(229, 229, 229);
                 padding-top: 9px;
+            }
+
+            span {
+                width: 100%;
+                display: block;
+            }
+
+            .category_header {
+                font-weight: bold;
             }
 
             .jsgif canvas{
@@ -27,31 +36,49 @@
             }
         </style>
         <paper-card id="move_card">
-            <img id="move_gif" src="{{ move.animation }}" rel:animated_src="{{ move.animation }}"/>
+            <div id="gif_container"></div>
             <div id="move_name" class="card-content">[[ move.name ]]</div>
-            <smash-card-content id="frame_scrubber_card_content" class="card-content" name="Scrubber" current_frame="{{ current_frame }}" add_bottom_border>
+            <smash-card-content id="frame_scrubber_card_content" class="card-content" name="Scrubber" add_bottom_border>
                 <frame-scrubber id="frame_scrubber" slot="collapse_content" class="collapse-content card-content" total_frames="[[ total_frames ]]" current_frame="{{ current_frame }}"></frame-scrubber>
             </smash-card-content>
             <smash-card-content class="card-content" name="Inputs" add_bottom_border>
                 <input-builder slot="collapse_content" class="collapse-content card-content" inputs="{{ move.input }}"></input-builder>
+            </smash-card-content>
+            <smash-card-content class="card-content" name="Details">
+                <template is="dom-repeat" items="[[ get_hitbox_categories(move) ]]" as="category">
+                    <div slot="collapse_content" class="category_header">[[ to_display_name(category) ]]</div>
+                    <div slot="collapse_content">
+                        <span>Damage: [[ get_all_stats(category, 'dmg') ]]</span>
+                        <span>Angle: [[ get_all_stats(category, 'angle') ]]</span>
+                        <span>Base Knockback: [[ get_all_stats(category, 'bk') ]]</span>
+                        <span>Set Knockback: [[ get_all_stats(category, 'wbk') ]]</span>
+                        <span>Knockback Growth: [[ get_all_stats(category, 'kg') ]]</span>
+                        <span>Effect: [[ get_all_stats(category, 'effect') ]]</span>
+                    </div>
+                    <br slot="collapse_content"/>
+                </template>
             </smash-card-content>
         </paper-card>
     </template>
     <script>
         Polymer({
             is: 'move-sheet',
-            
+
+            behaviors: [
+                GifBehavior
+            ],
+
             properties: {
-            	move: {
-            	   type: Object,
-            	   value: {},
-            	   observer: 'move_changed'
-            	},
-            	total_frames: {
-            	   type: Number,
-            	   value: -1
-            	},
-            	current_frame: {
+                move: {
+                   type: Object,
+                   value: {},
+                   observer: 'move_changed'
+                },
+                total_frames: {
+                   type: Number,
+                   value: -1
+                },
+                current_frame: {
                     type: Number,
                     value: -1
                 }
@@ -59,14 +86,33 @@
 
             listeners: {
                 'current_frame_changed': 'current_frame_changed',
-                'play_pause_tapped': 'play_pause_toggle',
+                'play_pause_tapped': 'play_pause_tapped',
             },
-            
+
             ready: function() {
             },
 
             move_changed: function() {
-                this.get_gif();
+                this.current_gif = undefined;
+                this.clean_up_container(this.$.gif_container);
+                this.get_gif(this.move.character, this.move.name, this.$.gif_container).then(function(gif) {
+                    this.current_gif = gif;
+                    gif.load(function() {
+                        gif.play()
+                        this.total_frames = gif.get_length();
+                        gif.get_canvas().addEventListener('click', this.play_pause_tapped.bind(this));
+                        setInterval(function() {
+                            if(gif.get_playing()) {
+                                this.$.frame_scrubber.current_frame = gif.get_current_frame();
+                            }
+                        }.bind(this), 50)
+                    }.bind(this));
+                }.bind(this));
+
+            },
+
+            set_move_name: function() {
+                this.$.move_name.innerHTML =  this.move.name;
                 if(this.move.name.lastIndexOf('B') == this.move.name.length - 1) {
                     var moves_to_index = {
                         'Neutral B': 0,
@@ -77,67 +123,49 @@
                     var display_name = this.move.b_moves[moves_to_index[this.move.name]];
                     this.$.move_name.innerHTML = display_name + ' - ' + this.move.name;
                 }
-                
             },
 
-            get_gif: function() {
-                var xobj = new XMLHttpRequest();
-                xobj.overrideMimeType("image/gif");
-                xobj.open('GET', '../../images/moves/' + this.move.character + '/' + this.get_file_name(this.move.name) + '.gif', true);
-                xobj.onreadystatechange = function () {
-                    if (xobj.readyState == 4 && xobj.status == "200") {
-                        this.move.animation = xobj.responseURL;
-                        var new_image = new Image();
-                        new_image.src = xobj.responseURL;
-                        new_image['rel:animated_source'] = xobj.responseURL;
-                        new_image.id = 'move_gif';
-                        new_image.onload = function() {
-                            this.$.move_card.removeChild(this.$.move_card.querySelector('#move_gif') || this.$.move_card.querySelector('.jsgif'));
-                            this.$.move_card.insertBefore(new_image, this.$.move_name);
-                            this.current_gif = new SuperGif({gif: this.$.move_card.querySelector('#move_gif'),
-                                                             progressbar_height: '0px'
-                                                   });
-                            this.current_gif.load(function() {
-                                this.total_frames = this.current_gif.get_length();
-                                this.current_gif.play();
-                                this.current_gif.get_canvas().addEventListener('click', this.play_pause_toggle.bind(this));
-                                setInterval(function() {
-                                    if(this.current_gif.get_playing()) {
-                                        this.$.frame_scrubber.current_frame = this.current_gif.get_current_frame();
-                                    }
-                                }.bind(this), 50)
-                            }.bind(this));
-                        }.bind(this);
-                    }
-                }.bind(this);
-                xobj.send(null);
+            to_display_name: function(name) {
+                name = name.replace(/\w\S*/g, function(txt){
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+                name = name.replace(/\d/g, function(txt) {
+                    return ' ' + txt;
+                });
+                if(name.indexOf('_') != -1) {
+                    name = name.replace('_', ' ');
+                }
+                if(name.indexOf('id') != -1) {
+                    name = name.replace('^(id)', 'ID');
+                }
+                return name;
             },
 
-            get_file_name: function(input) {
-                var filenames = {'Down B': 'd_b',
-                                 'Up B': 'up_b',
-                                 'Forward B': 'f_b',
-                                 'Neutral B': 'n_b',
-                                 'Down Tilt': 'd_tilt',
-                                 'Up Tilt': 'up_tilt',
-                                 'Forward Tilt': 'f_tilt',
-                                 'Down Smash': 'd_smash',
-                                 'Up Smash': 'up_smash',
-                                 'Forward Smash': 'f_smash',
-                                 'Neutral Air': 'n_air',
-                                 'Back Air': 'b_air',
-                                 'Forward Air': 'f_air',
-                                 'Down Air': 'd_air',
-                                 'Up Air': 'up_air',
-                                 'Dash Attack': 'dash',
-                                 
-                    };
-                if(input in filenames) {
-                    return filenames[input];
+            get_hitbox_categories: function() {
+                return Object.keys(this.move.hitboxes);
+            },
+
+            get_all_stats: function(category, type) {
+                var arr = [];
+                if(!this.move.hitboxes[category][Object.keys(this.move.hitboxes[category])[0]].dmg) {
+                    arr.push(this.move.hitboxes[category][type])
                 }
                 else {
-                    console.error(input)
+                    for(var i in this.move.hitboxes[category]) {
+                        arr.push(this.move.hitboxes[category][i][type])
+                    }
                 }
+                var all_equal = true;
+                var first_elem = arr[0];
+                for(var j in arr) {
+                    if(arr[j] != arr[0]) {
+                        all_equal = false;
+                    }
+                }
+                if(all_equal) {
+                    return arr[0];
+                }
+                return arr.join(', ');
             },
 
             current_frame_changed: function(event) {
@@ -146,15 +174,9 @@
                     this.current_gif.move_to(event.detail);
                 }
             },
-            
-            play_pause_toggle: function(event) {
-                this.$.frame_scrubber.toggle_play_pause_icon();
-                if(this.current_gif.get_playing()) {
-                    this.current_gif.pause();
-                }
-                else {
-                    this.current_gif.play();
-                }
+
+            play_pause_tapped: function() {
+                this.play_pause_toggle(this.$.frame_scrubber, this.current_gif);
             }
         });
     </script>

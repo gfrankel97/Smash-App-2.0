@@ -53,7 +53,7 @@
                 <div id="character_one_header" class="shared_header_styles">
                     {{ character_one.name }}
                 </div>
-                
+
                 <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_sheet_image }}"></iron-image>
                 <div id="character_two_header" class="shared_header_styles">
                     {{ character_two.name }}
@@ -73,7 +73,7 @@
     <script>
         Polymer({
             is: 'character-matchup',
-            
+
             properties: {
             	character_one: {
             		type: Object,
@@ -88,6 +88,7 @@
             },
 
             ready: function() {
+                console.log(this.character_one)
             },
 
             character_one_changed: function() {
@@ -95,15 +96,15 @@
 
             character_two_changed: function() {
             },
-            
+
             get_speed_categories: function() {
-                return ['Dash Speed','Fall Speed', 'Jump Squat', 'Aerial Drift'];
+                return ['Dash Speed','Fall Speed', 'Jump Squat', 'Aerial Drift', 'Jump Height'];
             },
 
             get_punish_categories: function() {
-            	return ['Launchers', 'Edgeguards'];
+            	return ['Launchers', 'Edgeguarding', 'Grab Range'];
             },
-            
+
             get_defense_categories: function() {
                 return ['Out of Shield', 'Shield Size'];
             }

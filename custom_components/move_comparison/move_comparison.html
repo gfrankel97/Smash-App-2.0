@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 
+<link rel="import" href="../behaviors/gif_behavior.html">
 <link rel="import" href="../smash_card_content/smash_card_content.html">
 <link rel="import" href="../frame_scrubber/frame_scrubber.html">
 <link rel="import" href="../input_builder/input_builder.html">
@@ -10,37 +10,49 @@
 <dom-module id="move-comparison">
     <template>
         <style is="custom-style" include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+            }
             paper-card {
                 width: 100%;
             }
+            smash-card-content {
+            }
+            .card-content {
+                padding: 0px;
+            }
+            span {
+                border-bottom: 1px solid #E5E5E5;
+            }
             .move_one_image {
                 float: left;
+                border-right: 1px solid white;
             }
             .move_two_image {
                 float: right;
+                border-left: 1px solid white;
+            }
+            .move_container {
+                width: calc(50% - 1px);
             }
             .shared_header_styles {
-                width: 50px;
-                margin-top: 15px;
+                height: 64px;
+                line-height: 64px;
+                padding: 8px;
                 display: inline-block;
-                font-size: 20px;
-            }
-            .shared_image_styles {
-                width: 30%;
-                height: 96px;
-            }
-            #move_one_header {
-                padding-left: 8px;
-                float: left;
-            }
-            #move_two_header {
-                float: right;
-                padding-right: 8px;
+                width: calc(50% - 16px);
             }
             .header {
+                width: 100%;
+                display: inline-block;
                 padding: 0px;
-                height: 96px;
-                border-bottom: 1px solid #E5E5E5;
+            }
+            .header_one {
+                float: left;
+            }
+            .header_two {
+                float: right;
+                text-align: end;
             }
             .subheader {
                 padding-left: 8px;
@@ -53,34 +65,42 @@
                 border-bottom: 1px solid #E5E5E5;
                 display: inline-flex;
             }
+            img, canvas {
+                max-width: 100%;
+                max-height: 100%;
+            }
             smash-card-content {
-                display: block;
+                padding: 11px 0px;
             }
         </style>
         <paper-card>
-            <div class="card-content header">
-                <iron-image sizing="cover" class="shared_image_styles move_one_image" src="{{ move_one.move_comparison_image }}"></iron-image>
-                <div id="move_one_header" class="shared_header_styles">{{ move_one.name }}</div>
-
-                <iron-image sizing="cover" class="shared_image_styles move_two_image" src="{{ move_two.move_comparison_image }}"></iron-image>
-                <div id="move_two_header" class="shared_header_styles">{{ move_two.name }}</div>
+            <div class="card-content">
+                <div class="header">
+                    <div id="move_one_container" class="move_container move_one_image"></div>
+                    <div id="move_two_container" class="move_container move_two_image"></div>
+                    <span class="shared_header_styles header_one">{{ move_one.name }}</span>
+                    <span class="shared_header_styles header_two">{{ move_two.name }}</span>
+                </div>
+                <smash-card-content  name="[[ scrubber_one_name ]]" add_bottom_border>
+                    <frame-scrubber id="frame_scrubber_one" slot="collapse_content" class="collapse-content" total_frames="[[ move_one_total_frames ]]" current_frame="{{ move_one_current_frame }}"></frame-scrubber>
+                </smash-card-content>
+                <smash-card-content  name="[[ scrubber_two_name ]]" add_bottom_border>
+                        <frame-scrubber id="frame_scrubber_two" slot="collapse_content" class="collapse-content" total_frames="[[ move_two_total_frames ]]" current_frame="{{ move_two_current_frame }}"></frame-scrubber>
+                    </smash-card-content>
+                <smash-card-content  name="Inputs" add_bottom_border>
+                    <input-builder slot="collapse_content" class="collapse-content" inputs="{{ get_tech() }}"></input-builder>
+                </smash-card-content>
             </div>
-            <div id="orientation_container">
-                <div class="subheader">Orientation</div>
-                <div><paper-toggle-button></paper-toggle-button></div>
-            </div>
-            <smash-card-content class="card-content" name="Scrubber" add_bottom_border>
-                <frame-scrubber slot="collapse_content" class="card-content collapse-content"></frame-scrubber>
-            </smash-card-content>
-            <smash-card-content class="card-content" name="Inputs" add_bottom_border>
-                <input-builder slot="collapse_content" class="collapse-content card-content" inputs="{{ get_tech() }}"></input-builder>
-            </smash-card-content>
         </paper-card>
     </template>
     <script>
         Polymer({
             is: 'move-comparison',
-            
+
+            behaviors: [
+                GifBehavior
+            ],
+
             properties: {
                 card_categories: {
                    type: Array,
@@ -93,20 +113,83 @@
                 move_two: {
                     type: Object,
                     value: {}
-                }
-            },
-            
-            ready: function() {
-                this.move_one = {name: 'Up Tilt',
-                                 move_comparison_image: '../../images/moves/fox/uptilt.gif'};
-                this.move_two = {name: 'Forward Smash',
-                                 move_comparison_image: '../../images/moves/falco/fsmash.gif'};
+                },
+                scrubber_one_name: String,
+                scrubber_two_name: String
             },
 
-            
-            
+            listeners: {
+                'current_frame_changed': 'current_frame_changed',
+                'play_pause_tapped': 'play_pause_tapped',
+            },
+
+            ready: function() {
+                this.get_gif('fox', 'Up Tilt', this.$.move_one_container).then(function(gif) {
+                    this.gif_one = gif;
+                    this.setup_gif(gif).then(function() {
+                        this.move_one_total_frames = gif.get_length();
+                        this.interval_one = setInterval(function() {
+                            if(gif.get_playing()) {
+                                this.move_one_current_frame = gif.get_current_frame();
+                            }
+                        }.bind(this), 50)
+                    }.bind(this));
+                }.bind(this));
+
+                this.get_gif('falco', 'Forward Smash', this.$.move_two_container).then(function(gif) {
+                    this.gif_two = gif;
+                    this.setup_gif(gif).then(function() {
+                        this.move_two_total_frames = gif.get_length();
+                        this.interval_two = setInterval(function() {
+                            if(gif.get_playing()) {
+                                this.move_two_current_frame = gif.get_current_frame();
+                            }
+                        }.bind(this), 50)
+                    }.bind(this));
+                }.bind(this));
+
+                this.move_one = {name: 'Up Tilt'};
+                this.move_two = {name: 'Forward Smash'};
+                this.scrubber_one_name = this.move_one.name + ' Scrubber';
+                this.scrubber_two_name = this.move_two.name + ' Scrubber';
+            },
+
+            setup_gif: function(gif) {
+                return new Promise(function(resolve, reject) {
+                    if(this.interval_one) {
+                        clearInterval(this.interval_one);
+                    }
+                    if(this.interval_two) {
+                        clearInterval(this.interval_two);
+                    }
+                    gif.load(function() {
+                        gif.play();
+                        gif.get_canvas().addEventListener('click', this.play_pause_tapped.bind(this));
+                        resolve();
+                    }.bind(this));
+                }.bind(this))
+            },
+
+            current_frame_changed: function(event) {
+                var gif = event.path[0].id.indexOf('one') != -1 ? this.gif_one : this.gif_two;
+                if(gif) {
+                    gif.pause();
+                    gif.move_to(event.detail);
+                }
+            },
+
+            play_pause_tapped: function(event) {
+                if(event.path[0].tagName == 'FRAME-SCRUBBER') {
+                    this.play_pause_toggle(event.path[0], event.path[0].id.indexOf('one') != -1 ? this.gif_one : this.gif_two);
+                }
+                else if (event.path[0].tagName == 'CANVAS') {
+                    var one_or_two = event.path[2].id.indexOf('one') != -1 ? 'one' : 'two';
+                    this.play_pause_toggle(this.$['frame_scrubber_' + one_or_two], this['gif_' + one_or_two]);
+                }
+            },
+
             get_tech: function() {
-                return {'Up Tilt': ['a + control_up']};
+                return ['control_up + a'];
             }
         });
     </script>

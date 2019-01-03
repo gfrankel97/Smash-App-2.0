@@ -1,0 +1,72 @@
+<script type="text/javascript" src="../../js/libgif-js/libgif.js"></script>
+<script>
+    GifBehavior = {
+        get_gif(character, move, container) {
+            return new Promise(function(resolve, reject) {
+                var xobj = new XMLHttpRequest();
+                    xobj.overrideMimeType("image/gif");
+                    xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/' + character + '/' + this.get_file_name(move) + '.gif' + '?sv=2018-03-28&ss=f&srt=co&sp=r&st=2019-01-03T04%3A22%3A55Z&se=2019-04-04T04%3A22%3A00Z&sig=%2F1i7SsE%2FAqLKuGILJUrMZMfRwPE5DhufwFxow70rQgQ%3D', true);
+                    xobj.onreadystatechange = function () {
+                        if (xobj.readyState == 4 && xobj.status == "200") {
+                            var image = new Image();
+                            image.src = xobj.responseURL;
+                            image['rel:animated_source'] = xobj.responseURL;
+                            image.onload = function() {
+                                container.appendChild(image);
+
+                                var gif = new SuperGif({gif: image,
+                                                        progressbar_height: '0px'
+                                });
+
+                                resolve(gif);
+                            }.bind(this);
+                        }
+                    }.bind(this);
+                    xobj.send(null);
+            }.bind(this))
+        },
+
+        clean_up_container: function(container) {
+            while(container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+        },
+
+        play_pause_toggle: function(scrubber, gif) {
+            scrubber.toggle_play_pause_icon();
+                if(gif.get_playing()) {
+                    gif.pause();
+                }
+                else {
+                    gif.play();
+                }
+        },
+
+        get_file_name: function(input) {
+                var filenames = {'Down B': 'd_b',
+                                 'Up B': 'up_b',
+                                 'Forward B': 'f_b',
+                                 'Neutral B': 'n_b',
+                                 'Down Tilt': 'd_tilt',
+                                 'Up Tilt': 'up_tilt',
+                                 'Forward Tilt': 'f_tilt',
+                                 'Down Smash': 'd_smash',
+                                 'Up Smash': 'up_smash',
+                                 'Forward Smash': 'f_smash',
+                                 'Neutral Air': 'n_air',
+                                 'Back Air': 'b_air',
+                                 'Forward Air': 'f_air',
+                                 'Down Air': 'd_air',
+                                 'Up Air': 'up_air',
+                                 'Dash Attack': 'dash',
+
+                    };
+                if(input in filenames) {
+                    return filenames[input];
+                }
+                else {
+                    console.error("NO FILENAME FOUND: ", input)
+                }
+            }
+    };
+</script>

@@ -71,11 +71,11 @@
                 </div>
                 <iron-collapse id="tech">
                     <template is="dom-if" if="{{ character }}">
-	                    <template is="dom-repeat" items="{{ character.tech }}" as="tech">
-	                        <div class="category_header">{{ get_tech_name() }}</div>
-	                        <input-builder inputs="{{ tech }}"></input-builder>
-	                    </template>
-	                </template>
+                        <template is="dom-repeat" items="{{ character.tech }}" as="tech">
+                            <div class="category_header">{{ get_tech_name() }}</div>
+                            <input-builder inputs="{{ tech }}"></input-builder>
+                        </template>
+                    </template>
                 </iron-collapse>
             </div>
         </paper-card>
@@ -83,62 +83,62 @@
     <script>
         Polymer({
             is: 'character-sheet',
-            
+
             properties: {
-            	character: {
-            		type: Object,
-            		value: {},
-            		observer: 'character_changed'
-            	},
-            	moves_opened: {
-            		type: Boolean,
-            		value: false,
-            	},
-            	moves_loaded: {
+                character: {
+                    type: Object,
+                    value: {},
+                    observer: 'character_changed'
+                },
+                moves_opened: {
                     type: Boolean,
                     value: false,
                 },
-            	tech_opened: {
-            		type: Boolean,
-            		value: false
-            	},
-            	tech_loaded: {
+                moves_loaded: {
+                    type: Boolean,
+                    value: false,
+                },
+                tech_opened: {
                     type: Boolean,
                     value: false
                 },
-            	tech_counter: {
-            		type: Number,
-            		value: -1
-            	}
+                tech_loaded: {
+                    type: Boolean,
+                    value: false
+                },
+                tech_counter: {
+                    type: Number,
+                    value: -1
+                }
             },
 
             character_changed: function() {
-            	 if(this.character == null) {
+                 if(this.character == null) {
                      this.tech_counter = -1;
-           		     this.move_opened = false;
-           		     this.tech_opened = false;
-            	 }
+                        this.move_opened = false;
+                        this.tech_opened = false;
+                 }
             },
 
             moves_collapse_tapped: function(event) {
-            	this.$.moves.toggle();
-            	this.moves_opened = this.$.moves.opened;
-            	if(!this.moves_loaded) {
-            		this.get_character_moves_data();
-            	}
+                this.$.moves.toggle();
+                this.moves_opened = this.$.moves.opened;
+                if(!this.moves_loaded) {
+                    this.get_character_moves_data();
+                }
             },
 
             tech_collapse_tapped: function() {
                 this.$.tech.toggle();
                 this.tech_opened = this.$.tech.opened;
                 if(!this.tech_loaded) {
-                	this.get_character_tech_data();
+                    this.get_character_tech_data();
                 }
             },
 
             get_tech_name: function() {
-            	this.tech_counter++;
-           		return Object.keys(this.character.tech[this.tech_counter])[0];
+                this.tech_counter++;
+                   return Object.keys(this.character.tech[this.tech_counter])[0];
             },
 
             get_move_categories: function() {
@@ -156,7 +156,7 @@
                 }
                 for(var i=0; i < this.character.moves.length; i++) {
                     var identifier = this.character.moves[i].name.split(' ')[this.character.moves[i].name.split(' ').length - 1];
-                    
+
                     if(category == name_to_category[identifier]) {
                         to_return.push(this.character.moves[i]);
                     }
@@ -170,8 +170,8 @@
 //              xhttp.onreadystatechange = function() {
 //                  if(xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
 //                      var returned_moves = xhttp.responseText;
-                        
-                        
+
+
 //                  }
 //              }
 //              xhttp.send();
@@ -183,12 +183,12 @@
 //              xhttp.onreadystatechange = function() {
 //                  if(xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
 //                      var returned_moves = xhttp.responseText;
-                        
-                        
+
+
 //                  }
 //              }
 //              xhttp.send();
-            	this.tech_loaded = true;
+                this.tech_loaded = true;
             },
 
             toggle_move_category: function(event) {
@@ -200,14 +200,14 @@
                 else {
                     event.target.style.fontWeight = 'normal';
                 }
-                
+
             },
 
             move_tapped: function(event) {
-            	var move = event.model.__data.move;
-            	move.character = this.character.name;
-            	move.b_moves = this.character.b_moves;
-            	this.fire('set_view', {view: 'move_sheet', character: this.character.name, move: move})
+                var move = event.model.__data.move;
+                move.character = this.character.name;
+                move.b_moves = this.character.b_moves;
+                this.fire('set_view', {view: 'move_sheet', character: this.character.name, move: move})
             }
         });
     </script>

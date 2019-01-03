@@ -47,29 +47,29 @@
                margin-top: 12px;
                margin-left: 8px;
                font-family: "Roboto";
-	        }
-	        #toolbar_text:hover {
-	           cursor:default;
-	        }
+            }
+            #toolbar_text:hover {
+               cursor:default;
+            }
             #secondary_toolbar_text {
                 font-size: 16px;
                 margin: auto;
                 padding-left: 16px;
             }
-	        #drawer_div {
-	            height: 100%;
-	            overflow: auto;
-	            background-color: var(--paper-grey-600);
-	            color: white;
-	        }
+            #drawer_div {
+                height: 100%;
+                overflow: auto;
+                background-color: var(--paper-grey-600);
+                color: white;
+            }
             #toolbar_div {
                 height: 64px;
                 width:100%;
             }
-	        .toolbar_button {
+            .toolbar_button {
                margin-top: 12px;
                margin-bottom: 12px;
-	        }
+            }
             paper-input {
                 width: calc(100% - 120px);
                 --paper-input-container-underline-focus: {
@@ -93,7 +93,9 @@
                         <div main-title id="toolbar_text">{{ toolbar_text }}</div>
                         <div id="secondary_toolbar_text">{{ secondary_toolbar_text }}</div>
                     </template>
-                    <paper-icon-button id="search_button" icon="smash:search" class="toolbar_button" on-tap="open_search"></paper-icon-button>
+                    <template is="dom-if" if="[[ character_select_bool ]]">
+                        <paper-icon-button id="search_button" icon="smash:search" class="toolbar_button" on-tap="open_search"></paper-icon-button>
+                    </template>
                     <paper-input id="search_input" on-keyup="search" tabindex="0" hidden="[[ !searching ]]"></paper-input>
                     <template is="dom-if" if="[[ searching ]]">
                         <paper-icon-button id="close_search_button" icon="smash:close" class="toolbar_button" on-tap="close_search"></paper-icon-button>
@@ -104,16 +106,16 @@
         <app-drawer id="navigation_drawer">
              <div id="drawer_div">
                 <div role="listbox">
-				    <paper-item id='character_select_list_item' on-tap="set_view">Character Select</paper-item>
-				    <paper-item id='character_matchup_list_item' on-tap="set_view">Character Matchup</paper-item>
-                    <paper-item id='move_sheet_list_item' on-tap="set_view">Move Data</paper-item>
-                    <paper-item id='move_comparison_list_item' on-tap="set_view">Move Comparison</paper-item>
-				</div>
+                    <paper-item id='character_select_item' on-tap="set_view">Character Select</paper-item>
+                    <paper-item id='character_matchup_item' on-tap="set_view">Character Matchup</paper-item>
+                    <paper-item id='move_sheet_item' on-tap="set_view">Move Data</paper-item>
+                    <paper-item id='move_comparison_item' on-tap="set_view">Move Comparison</paper-item>
+                </div>
              </div>
         </app-drawer>
-<!--         <template is="dom-if" if="{{ character_select_bool }}"> -->
-            <character-select id="character_select" is_mobile="{{ is_mobile }}" hidden="[[ !character_select_bool ]]"></character-select>
-<!--         </template> -->
+        <template is="dom-if" if="{{ character_select_bool }}">
+            <character-select id="character_select" is_mobile="{{ is_mobile }}"></character-select>
+        </template>
         <template is="dom-if" if="{{ character_sheet_bool }}">
             <character-sheet tech_counter="{{ tech_counter }}" class="character_sheet" character="{{ character }}"></character-sheet>
         </template>
@@ -130,7 +132,7 @@
     <script>
         Polymer({
             is: 'character-navigation',
-            
+
             properties: {
                 is_mobile: {
                     type: Boolean,
@@ -141,16 +143,16 @@
                     value: null
                 },
                 toolbar_text: {
-                	type: String,
-                	value: 'SSBM Vault'
+                    type: String,
+                    value: 'SSBM Vault'
                 },
                 secondary_toolbar_text: {
-                	type: String,
-                	value: ''
+                    type: String,
+                    value: ''
                 },
                 character_select_bool: {
-                	type: Boolean,
-                	value: false,
+                    type: Boolean,
+                    value: false,
                 },
                 character_sheet_bool: {
                     type: Boolean,
@@ -161,11 +163,11 @@
                     value: false,
                 },
                 move_comparison_bool: {
-                	type: Boolean,
-                	value: false
+                    type: Boolean,
+                    value: false
                 },
                 move_sheet_bool: {
-                	type: Boolean,
+                    type: Boolean,
                     value: false
                 },
                 searching: {
@@ -175,29 +177,29 @@
             },
 
             listeners: {
-            	'set_view': 'set_view',
+                'set_view': 'set_view',
                 'character_selected': 'character_selected',
                 'change_toolbar_text': 'change_toolbar_text',
                 'set_character_matchup_view': 'set_character_matchup_view'
             },
 
             ready: function() {
-            	this.character_select_bool = true;
+                this.character_select_bool = true;
             },
-            
+
             set_view: function(event) {
-            	var to_view = '';
-            	this.$.navigation_drawer.close();
-            	if(typeof(event) == 'string') {
-            		to_view = event;
-            	}
-            	else if(event.detail.view) {
-            	    to_view = event.detail.view;
-            	}
-            	else {
-            		to_view = event.target.id;
-            	}
-            	this.character_select_bool = false;
+                var to_view = '';
+                this.$.navigation_drawer.close();
+                if(typeof(event) == 'string') {
+                    to_view = event;
+                }
+                else if(event.detail.view) {
+                    to_view = event.detail.view;
+                }
+                else {
+                    to_view = event.target.id;
+                }
+                this.character_select_bool = false;
                 this.character_sheet_bool = false;
                 this.character_matchup_bool = false;
                 this.move_comparison_bool = false;
@@ -205,19 +207,21 @@
                 this.tech_counter = -1;
                 this.character = null;
                 this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
-                this.close_search();
+                if(this.searching) {
+                    this.close_search();
+                }
                 switch (to_view) {
-                	case 'character_select':
+                    case 'character_select_item':
                         this.character_select_bool = true;
                         this.character = null;
-                		break;
-                	case 'character_sheet':
-                		this.character_sheet_bool = true;
-                		break;
-                	case 'character_matchup':
-                		this.character_matchup_bool = true;
-                		this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
-                		//if(event.detail.character_one && event.detail.character_two) {
+                        break;
+                    case 'character_sheet':
+                        this.character_sheet_bool = true;
+                        break;
+                    case 'character_matchup_item':
+                        this.character_matchup_bool = true;
+                        this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
+                        //if(event.detail.character_one && event.detail.character_two) {
                         if(true) {
                             //this.character_one = event.detail.character_one;
                             //this.character_two = event.detail.character_two;
@@ -225,23 +229,23 @@
                             this.character_two = {};
                             this.character_one.name = 'Fox';
                             this.character_two.name = 'Falco';
-                            this.character_one.character_sheet_image = '../../images/character_select_images/fox.jpg';
-                            this.character_two.character_sheet_image = '../../images/character_select_images/falco.jpg';
+                            this.character_one.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg';
+                            this.character_two.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/falco.jpg';
                         }
                         else {
                             this.character_one = 'dummy';
                             this.character_two = 'dummy';
                         }
-                		break;
-                	case 'move_comparison':
-                		this.move_comparison_bool = true;
-                		break;
-                	case 'move_sheet':
-                		this.move_sheet_move = event.detail.move;
+                        break;
+                    case 'move_comparison_item':
+                        this.move_comparison_bool = true;
+                        break;
+                    case 'move_sheet':
+                        this.move_sheet_move = event.detail.move;
                         this.move_sheet_bool = true;
                         break;
-                	default:
-                		this.character_select_bool = true;
+                    default:
+                        this.character_select_bool = true;
                         break;
                 }
             },
@@ -251,12 +255,12 @@
             },
 
             change_toolbar_text: function(event) {
-            	this.toolbar_text = event.detail.primary;
-            	this.secondary_toolbar_text = ((event.detail.secondary !== undefined) || (event.detail.secondary !== '')) ? event.detail.secondary : '';
+                this.toolbar_text = event.detail.primary;
+                this.secondary_toolbar_text = ((event.detail.secondary !== undefined) || (event.detail.secondary !== '')) ? event.detail.secondary : '';
             },
 
             character_selected: function(event) {
-            	this.set_view('character_sheet');
+                this.set_view('character_sheet');
                 this.character = event.detail;
             },
 
@@ -274,7 +278,7 @@
             },
 
             search: function(event) {
-                this.$.character_select.filter_characters(this.$.search_input.value);
+                this.shadowRoot.querySelector('character-select').filter_characters(this.$.search_input.value);
             }
         });
     </script>

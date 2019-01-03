@@ -10,7 +10,7 @@
             :host {
                 display: flex;
             }
-        
+
             paper-slider {
                 width: calc(100% - 40px);
                 height: 70px;
@@ -27,12 +27,12 @@
         </style>
 
         <paper-icon-button id="play_pause_icon" icon="smash:pause" on-tap="play_pause_tapped"></paper-icon-button>
-        <paper-slider id="scrubber" pin snaps max="{{ total_frames }}" value="[[ current_frame ]]" on-change="drag_end" on-immediate-value-change="scrubber_value_changed"></paper-slider>
+        <paper-slider id="scrubber" pin snaps min="1" value="[[ current_frame ]]" on-change="drag_end" on-immediate-value-change="scrubber_value_changed"></paper-slider>
     </template>
     <script>
         Polymer({
             is: 'frame-scrubber',
-            
+
             properties: {
             	total_frames: {
             	    type: Number,
@@ -54,23 +54,23 @@
                     this.$.scrubber.disabled = true;
                 }
                 else {
-                    this.$.scrubber.max = this.total_frames;
+                    this.$.scrubber.max = this.total_frames + 1;
                     this.$.scrubber.disabled = false;
                     this.$.play_pause_icon.icon = 'smash:pause';
-                    
+
                 }
             },
 
             drag_end: function(event) {
                 this.$.play_pause_icon.icon = 'smash:play';
+                this.scrubber_value_changed();
             },
 
             current_frame_changed: function() {
-                
             },
 
             scrubber_value_changed: function(event) {
-                this.fire('current_frame_changed', this.$.scrubber.immediateValue)
+                this.fire('current_frame_changed', this.$.scrubber.immediateValue - 1)
             },
 
             play_pause_tapped: function() {

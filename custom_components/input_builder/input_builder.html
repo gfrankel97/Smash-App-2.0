@@ -39,7 +39,7 @@
                     <template is="dom-repeat" items="{{ get_separate_buttons(input) }}" as="button">
                         <img src="{{ get_button_source(button) }}">
                         <template is="dom-if" if="{{ !is_last_button_item(input, button) }}">
-                            <img class="plus" src=" ../../images/gcc_buttons/plus.png">
+                            <img class="plus" src="https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/plus.png?sv=2018-03-28&ss=f&srt=co&sp=r&st=2019-01-03T04%3A22%3A55Z&se=2019-04-04T04%3A22%3A00Z&sig=%2F1i7SsE%2FAqLKuGILJUrMZMfRwPE5DhufwFxow70rQgQ%3D">
                         </template>
                     </template>
                 </template>
@@ -93,7 +93,7 @@
             },
 
             get_button_source: function(button_string) {
-                return '../../images/gcc_buttons/' + button_string + '.png'
+                return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + button_string + '.png' + '?sv=2018-03-28&ss=f&srt=co&sp=r&st=2019-01-03T04%3A22%3A55Z&se=2019-04-04T04%3A22%3A00Z&sig=%2F1i7SsE%2FAqLKuGILJUrMZMfRwPE5DhufwFxow70rQgQ%3D';
             },
             
             get_separate_buttons: function(input) {
@@ -107,7 +107,7 @@
             },
             
             get_combined_source: function(obj) {
-            	return '../../images/gcc_buttons/' + obj + '.png';
+            	return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + obj + '.png' + '?sv=2018-03-28&ss=f&srt=co&sp=r&st=2019-01-03T04%3A22%3A55Z&se=2019-04-04T04%3A22%3A00Z&sig=%2F1i7SsE%2FAqLKuGILJUrMZMfRwPE5DhufwFxow70rQgQ%3D';
             }
         });
     </script>
