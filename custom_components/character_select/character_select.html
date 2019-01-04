@@ -70,7 +70,7 @@
 //                 'http://heimdallmelee.azurewebsites.net/api/character/'
                 load_character_data().then(function(characters) {
                     for(var key in characters) {
-                        characters[key].character_select_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg' + '?sv=2018-03-28&ss=f&srt=co&sp=r&st=2019-01-03T04%3A22%3A55Z&se=2019-04-04T04%3A22%3A00Z&sig=%2F1i7SsE%2FAqLKuGILJUrMZMfRwPE5DhufwFxow70rQgQ%3D';
+                        characters[key].character_select_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
                         this.push('characters', characters[key]);
                     }
                     this.all_characters = this.characters;
