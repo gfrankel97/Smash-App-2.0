@@ -36,9 +36,11 @@
         </style>
         <div id="centerer" class="layout horizontal wrap">
             <template is="dom-repeat" items="{{ characters }}" as="character">
-                <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
-                    <div class="card-content character_text">{{ get_display_name(character.name) }}</div>
-                </paper-card>
+                <template is="dom-if" if="[[ has_data(character.name) ]]">
+                    <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
+                        <div class="card-content character_text">{{ get_display_name(character.name) }}</div>
+                    </paper-card>
+                </template>
             </template>
         </div>
     </template>
@@ -90,6 +92,19 @@
                 name = name.replace(' ', '_');
                 name = name.toLowerCase();
                 return name;
+            },
+
+            has_data: function(character_name) {
+                console.log(character_name)
+                var known_characters = ['bowser', 'captain_falcon', 'falco', 'fox', 'jigglypuff', 'mario', 'marth', 'peach'];
+                if(known_characters.indexOf(character_name) != -1) {
+                    return true;
+                }
+                else 
+                {
+                    return false;
+                }
+
             },
 
             get_display_name: function(name) {
