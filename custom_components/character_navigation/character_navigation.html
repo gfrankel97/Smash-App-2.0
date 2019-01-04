@@ -210,6 +210,7 @@
                 if(this.searching) {
                     this.close_search();
                 }
+                console.log(to_view)
                 switch (to_view) {
                     case 'character_select_item':
                         this.character_select_bool = true;
@@ -219,14 +220,23 @@
                         this.character_sheet_bool = true;
                         break;
                     case 'character_matchup_item':
+                    console.log('HERE')
                         this.character_matchup_bool = true;
                         this.change_toolbar_text({detail:{primary: 'SSBM Vault', secondary: ''}});
                         //if(event.detail.character_one && event.detail.character_two) {
                         if(true) {
                             //this.character_one = event.detail.character_one;
                             //this.character_two = event.detail.character_two;
-                            this.character_one = {};
-                            this.character_two = {};
+                            this.character_one = undefined;
+                            this.character_two = undefined;
+                            this.character_one = {
+                                "name": 'Fox',
+                                "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D'
+                            };
+                            this.character_two = {
+                                "name": "Falco",
+                                "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/falco.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D'
+                            };
                             this.character_one.name = 'Fox';
                             this.character_two.name = 'Falco';
                             this.character_one.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
