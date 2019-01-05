@@ -76,7 +76,6 @@
                         this.push('characters', characters[key]);
                     }
                     this.all_characters = this.characters;
-                    console.log(this.characters)
                 }.bind(this));
 
 //                 this.push('characters', {name: 'Fox',
@@ -95,7 +94,6 @@
             },
 
             has_data: function(character_name) {
-                console.log(character_name)
                 var known_characters = ['bowser', 'captain_falcon', 'falco', 'fox', 'jigglypuff', 'mario', 'marth', 'peach'];
                 if(known_characters.indexOf(character_name) != -1) {
                     return true;
