@@ -16,6 +16,8 @@
 <link rel="import" href="../move_sheet/move_sheet.html">
 <link rel="import" href="../styles/icons.html">
 
+<script type="text/javascript" src="../../js/character_json_parser.js"></script>
+
 
 <dom-module id="character-navigation">
     <template>
@@ -109,12 +111,12 @@
                     <paper-item id='character_select_item' on-tap="set_view">Character Select</paper-item>
                     <paper-item id='character_matchup_item' on-tap="set_view">Character Matchup</paper-item>
                     <!-- <paper-item id='move_sheet_item' on-tap="set_view">Move Data</paper-item> -->
-                    <paper-item id='move_comparison_item' on-tap="set_view">Move Comparison</paper-item>
+                    <!-- <paper-item id='move_comparison_item' on-tap="set_view">Move Comparison</paper-item> -->
                 </div>
              </div>
         </app-drawer>
         <template is="dom-if" if="{{ character_select_bool }}">
-            <character-select id="character_select" is_mobile="{{ is_mobile }}"></character-select>
+            <character-select id="character_select" is_mobile="{{ is_mobile }}" characters="{{ characters }}"></character-select>
         </template>
         <template is="dom-if" if="{{ character_sheet_bool }}" restamp="true">
             <character-sheet tech_counter="{{ tech_counter }}" class="character_sheet" character="{{ character }}"></character-sheet>
@@ -141,6 +143,10 @@
                 character: {
                     type: String,
                     value: null
+                },
+                characters: {
+                    type: Array,
+                    value: []
                 },
                 toolbar_text: {
                     type: String,
@@ -185,7 +191,34 @@
 
             ready: function() {
                 //alert('IM CACHED')
+                window.connection_string = '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
                 this.character_select_bool = true;
+                this.get_character_data();
+            },
+
+            get_character_data: function() {
+//                 'http://heimdallmelee.azurewebsites.net/api/character/'
+                load_character_data().then(function(characters) {
+                    for(var key in characters) {
+                        characters[key].character_select_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg' + window.connection_string;
+                        this.push('characters', characters[key]);
+                    }
+                    this.all_characters = this.characters;
+                }.bind(this));
+
+//                 this.push('characters', {name: 'Fox',
+//                                          character_select_image: '../../images/character_select_images/fox.jpg',
+//                                          tech: [
+//                                              {'Waveshine': ['control_down + b','y', 'control_down_right + r']}
+//                                          ]
+//                                          });
+            },
+
+            convert_to_filename: function(name) {
+                name = name.replace('.', '');
+                name = name.replace(' ', '_');
+                name = name.toLowerCase();
+                return name;
             },
 
             set_view: function(event) {
@@ -229,19 +262,24 @@
                         if(true) {
                             //this.character_one = event.detail.character_one;
                             //this.character_two = event.detail.character_two;
-                            
-                            this.character_one = {
+                            console.log(this.characters)
+                            this.character_one = this.characters[7];
+                            this.character_two = this.characters[18];
+                            console.log(this.character_one);
+                            console.log(this.character_two)
+                            /*this.character_one = {
                                 "name": 'Fox',
-                                "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D'
+                                "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg' + window.connection_string
                             };
                             this.character_two = {
                                 "name": "Falco",
-                                "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/falco.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D'
+                                "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/falco.jpg' + window.connection_string
                             };
-                            this.character_one.name = 'Fox';
-                            this.character_two.name = 'Falco';
-                            this.character_one.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
-                            this.character_two.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/falco.jpg?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
+                            */
+                            //this.character_one.name = 'Fox';
+                            //this.character_two.name = 'Falco';
+                            //this.character_one.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg' + window.connection_string;
+                            //this.character_two.character_sheet_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/falco.jpg' + window.connection_string;
                         }
                         else {
                             this.character_one = 'dummy';

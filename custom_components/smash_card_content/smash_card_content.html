@@ -33,6 +33,20 @@
             #category_title {
                 display: inline-block;
             }
+            .category_name {
+                display: inline-block;
+                width: 35%;
+            }
+            .category_value_one {
+                display: inline-block;
+                width: 22.5%;
+
+            }
+            .category_value_two {
+                display: inline-block;
+                width: 25%;
+
+            }
 
 
         </style>
@@ -47,7 +61,11 @@
                 <div class="collapse-content">
                 <slot name="collapse_content"></slot>
                     <template is="dom-repeat" items="{{ collapse_categories }}" as="category">
-                        <div>{{ category }}</div>
+                        <div class="categories">
+                            <div class="category_name">{{ category.name }}: </div>
+                            <div class="category_value_one">{{ category.value.0 }}</div>
+                            <div class="category_value_two">{{ category.value.1 }}</div>
+                        </div>
                     </template>
                 </div>
             </iron-collapse>
@@ -63,7 +81,8 @@
                 },
                 collapse_categories: {
                     type: Array,
-                    value: []
+                    value: [],
+                    observer: "categories_changed"
                 },
                 name: {
                     type: String,
@@ -94,11 +113,34 @@
                 else {
                     this.style.borderBottom = '';
                 }
+                //console.log(this.collapse_categories)
+                //console.log(this.$.collapse)
             },
 
             collapse_tapped: function() {
                 this.$.collapse.toggle()
                 this.collapse_opened = this.$.collapse.opened;
+            },
+
+            categories_changed: function() {
+                setTimeout(function() {
+                    var categories = this.$.collapse.querySelectorAll('.categories');
+                    console.log(categories);
+                    for(var i = 0; i < categories.length; i++) {
+                        var category_one = categories[i].querySelector('.category_value_one');
+                        var category_two = categories[i].querySelector('.category_value_two');
+                        var value_one = parseInt(category_one.innerText.replace(/\D/g,''));
+                        var value_two = parseInt(category_two.innerText.replace(/\D/g,''));
+                        if(value_one < value_two) {
+                            category_one.style.color = '#aef1c2';
+                            category_two.style.color = '#ff867c';
+                        }
+                        else {
+                            category_two.style.color = '#aef1c2';
+                            category_one.style.color = '#ff867c';
+                        }
+                    }
+                }.bind(this), 1);
             }
         });
     </script>

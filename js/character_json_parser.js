@@ -1,7 +1,7 @@
 function load_JSON(callback) {
     var xobj = new XMLHttpRequest();
         xobj.overrideMimeType("application/json");
-        xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/hitboxDB.json' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D', true);
+        xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/hitboxDB.json' + window.connection_string, true);
     xobj.onreadystatechange = function () {
           if (xobj.readyState == 4 && xobj.status == "200") {
               callback(xobj.responseText);
@@ -13,7 +13,7 @@ function load_JSON(callback) {
 function load_JSON2(callback) {
     var xobj = new XMLHttpRequest();
         xobj.overrideMimeType("application/json");
-    xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/character_general_data.json' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D', true);
+    xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/character_general_data.json' + window.connection_string, true);
 
     xobj.onreadystatechange = function () {
           if (xobj.readyState == 4 && xobj.status == "200") {

@@ -93,7 +93,7 @@
             },
 
             get_button_source: function(button_string) {
-                return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + button_string + '.png' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
+                return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + button_string + '.png' + window.connection_string;
             },
             
             get_separate_buttons: function(input) {
@@ -107,7 +107,7 @@
             },
             
             get_combined_source: function(obj) {
-            	return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + obj + '.png' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
+            	return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + obj + '.png' + window.connection_string;
             }
         });
     </script>

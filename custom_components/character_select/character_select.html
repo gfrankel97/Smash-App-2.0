@@ -5,7 +5,6 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 
-<script type="text/javascript" src="../../js/character_json_parser.js"></script>
 
 <dom-module id="character-select">
     <template>
@@ -61,36 +60,6 @@
 
 
             ready: function() {
-                this.load();
-            },
-
-            load: function() {
-                this.get_character_data();
-            },
-
-            get_character_data: function() {
-//                 'http://heimdallmelee.azurewebsites.net/api/character/'
-                load_character_data().then(function(characters) {
-                    for(var key in characters) {
-                        characters[key].character_select_image = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/' + this.convert_to_filename(characters[key].name) + '.jpg' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
-                        this.push('characters', characters[key]);
-                    }
-                    this.all_characters = this.characters;
-                }.bind(this));
-
-//                 this.push('characters', {name: 'Fox',
-//                                          character_select_image: '../../images/character_select_images/fox.jpg',
-//                                          tech: [
-//                                              {'Waveshine': ['control_down + b','y', 'control_down_right + r']}
-//                                          ]
-//                                          });
-            },
-
-            convert_to_filename: function(name) {
-                name = name.replace('.', '');
-                name = name.replace(' ', '_');
-                name = name.toLowerCase();
-                return name;
             },
 
             has_data: function(character_name) {

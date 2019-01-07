@@ -5,7 +5,7 @@
             return new Promise(function(resolve, reject) {
                 var xobj = new XMLHttpRequest();
                     xobj.overrideMimeType("image/gif");
-                    xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/' + character + '/' + this.get_file_name(move) + '.gif' + '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D', true);
+                    xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/' + character + '/' + this.get_file_name(move) + '.gif' + window.connection_string, true);
                     xobj.onreadystatechange = function () {
                         if (xobj.readyState == 4 && xobj.status == "200") {
                             var image = new Image();

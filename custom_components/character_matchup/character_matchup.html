@@ -49,21 +49,25 @@
 
         <paper-card>
             <div class="card-content header">
-                <iron-image sizing="cover" class="shared_image_styles character_one_image" src="{{ character_one.character_sheet_image }}"></iron-image>
+                <iron-image sizing="cover" class="shared_image_styles character_one_image" src="{{ character_one.character_select_image }}"></iron-image>
                 <div id="character_one_header" class="shared_header_styles">
                     {{ character_one.name }}
                 </div>
 
-                <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_sheet_image }}"></iron-image>
+                <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_select_image }}"></iron-image>
                 <div id="character_two_header" class="shared_header_styles">
                     {{ character_two.name }}
                 </div>
             </div>
             <div class="card-content">
-                <smash-card-content name="Speed" collapse_categories="[[ get_speed_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
+                <smash-card-content name="Speed" collapse_categories="[[ get_speed_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
+
+                </smash-card-content>
             </div>
             <div class="card-content">
-                <smash-card-content name="Punish" collapse_categories="[[ get_punish_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
+                <smash-card-content name="Punish" collapse_categories="[[ get_punish_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
+
+                </smash-card-content>
             </div>
             <div class="card-content">
                 <smash-card-content name="Defense" collapse_categories="[[ get_defense_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
@@ -97,15 +101,63 @@
             },
 
             get_speed_categories: function() {
-                return ['Dash Speed','Fall Speed', 'Jump Squat', 'Aerial Drift', 'Jump Height'];
+                console.log(this.character_one)
+                return [
+                    {
+                        name: 'Dash Speed',
+                        value: [this.character_one['Running Speed'].ranking, this.character_two['Running Speed'].ranking]
+                    },
+                    {
+                        name:'Fall Speed',
+                        value: [this.character_one['Avg. Fall Speed'].ranking, this.character_two['Avg. Fall Speed'].ranking]
+                    },
+                    // {
+                    //     name: 'Jump Squat', 
+                    //     value: ''
+                    // },
+                    // {
+                    //     name: 'Aerial Drift',
+                    //     value: ''
+                    // },
+                    {
+                        name: 'Jump Height',
+                        value: [this.character_one['Total Jump Height'].ranking, this.character_two['Total Jump Height'].ranking]
+                    }
+                ]
             },
 
             get_punish_categories: function() {
-            	return ['Launchers', 'Edgeguarding', 'Grab Range'];
+                return [
+                    // {
+                    //     name: 'Launchers',
+                    //     value: ''
+                    // },
+                    // {
+                    //     name:'Edgeguarding',
+                    //     value: ''
+                    // },
+                    {
+                        name: 'Grab Range', 
+                        value: [this.character_one['Grab Range'].ranking, this.character_two['Grab Range'].ranking]
+                    }
+                ]
             },
 
             get_defense_categories: function() {
-                return ['Out of Shield', 'Shield Size'];
+                return [
+                    {
+                        name: 'Weight',
+                        value: [this.character_one['Weight'].ranking, this.character_two['Weight'].ranking]
+                    },
+                    // {
+                    //     name: 'Out of Shield',
+                    //     value: ''
+                    // },
+                    // {
+                    //     name: 'Shield Size',
+                    //     value: ''
+                    // }
+                ]
             }
         });
     </script>
