@@ -97,7 +97,7 @@ function get_final_product(data_obj_1, data_obj_2) {
         //put in data
         var has_angles = {
             "bowser": ['ftilt'],
-            'captain_falcon': ['ftilt', 'fsmash'],
+            'captain_falcon': ['ftilt'],
             'd_k': ['ftilt'],
             'dr_mario': ['ftilt', 'fsmash'],
             'mario': ['ftilt', 'fsmash'],
