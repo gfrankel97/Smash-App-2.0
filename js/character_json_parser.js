@@ -87,13 +87,46 @@ function load_character_data() {
                         }
                     }
                 }
-                resolve(unfinished_product);
+
+                var final_prod = [];
+                var known_characters = ['bowser', 'captain_falcon', 'falco', 'fox', 'jigglypuff', 'mario', 'marth', 'peach'];
+                for(var product in unfinished_product) {
+                    if(known_characters.indexOf(unfinished_product[product].name) != -1) {
+                        final_prod.push(unfinished_product[product]);
+                    }
+                }
+
+                console.log(final_prod)
+
+
+                resolve(final_prod);
             })
         });
     });
 }
 
 function get_final_product(data_obj_1, data_obj_2) {
+        //put in data
+        var has_angles = {
+            "bowser": ['ftilt'],
+            'captain_falcon': ['ftilt'],
+            'd_k': ['ftilt'],
+            'dr_mario': ['ftilt', 'fsmash'],
+            'mario': ['ftilt', 'fsmash'],
+            'falco': ['ftilt'],
+            'fox': ['ftilt'],
+            'luigi': ['ftilt', 'fsmash'],
+            'ganondorf': ['ftilt', 'fsmash'],
+            'ice_climbers': ['ftilt'],
+            'jigglypuff': ['ftilt'],
+            'kirby': ['ftilt', 'fsmash'],
+            'mewtwo': ['ftilt'],
+            'ness': ['ftilt'],
+            'pikachu': ['ftilt'],
+            'samus_aran': ['ftilt', 'fsmash'],
+            'yoshi': ['ftilt', 'fsmash'],
+            'zelda': ['ftilt']
+        };
         data_obj_2.moves = [];
         for(var key in data_obj_1) {
             if(typeof data_obj_1[key] == 'object') {
@@ -102,6 +135,11 @@ function get_final_product(data_obj_1, data_obj_2) {
                 data_obj_2.moves[data_obj_2.moves.length - 1].active = true;
                 data_obj_2.moves[data_obj_2.moves.length - 1].name = get_display_name(key);
                 data_obj_2.moves[data_obj_2.moves.length - 1].input = get_input(key);
+                if(data_obj_2.name in has_angles) {
+                    if(has_angles[data_obj_2.name].indexOf(key) != -1) {
+                        data_obj_2.moves[data_obj_2.moves.length - 1].has_angles = true;
+                    }
+                }
                 if(data_obj_2.moves[data_obj_2.moves.length - 1].name.charAt(data_obj_2.moves[data_obj_2.moves.length - 1].name.length - 1) == 'B') {
                     if('b_moves' in data_obj_2) {
                     }

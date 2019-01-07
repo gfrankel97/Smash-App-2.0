@@ -95,7 +95,7 @@
             move_changed: function() {
                 this.current_gif = undefined;
                 this.clean_up_container(this.$.gif_container);
-                this.get_gif(this.move.character, this.move.name, this.$.gif_container).then(function(gif) {
+                this.get_gif(this.move.character, this.move, this.$.gif_container).then(function(gif) {
                     this.current_gif = gif;
                     gif.load(function() {
                         gif.play()
@@ -108,7 +108,6 @@
                         }.bind(this), 50)
                     }.bind(this));
                 }.bind(this));
-
             },
 
             set_move_name: function() {
@@ -142,7 +141,9 @@
             },
 
             get_hitbox_categories: function() {
-                return Object.keys(this.move.hitboxes);
+                if(this.move) {
+                    return Object.keys(this.move.hitboxes);
+                }
             },
 
             get_all_stats: function(category, type) {

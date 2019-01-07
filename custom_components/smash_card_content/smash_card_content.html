@@ -113,8 +113,6 @@
                 else {
                     this.style.borderBottom = '';
                 }
-                //console.log(this.collapse_categories)
-                //console.log(this.$.collapse)
             },
 
             collapse_tapped: function() {
@@ -125,7 +123,6 @@
             categories_changed: function() {
                 setTimeout(function() {
                     var categories = this.$.collapse.querySelectorAll('.categories');
-                    console.log(categories);
                     for(var i = 0; i < categories.length; i++) {
                         var category_one = categories[i].querySelector('.category_value_one');
                         var category_two = categories[i].querySelector('.category_value_two');

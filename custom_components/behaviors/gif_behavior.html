@@ -5,9 +5,10 @@
             return new Promise(function(resolve, reject) {
                 var xobj = new XMLHttpRequest();
                     xobj.overrideMimeType("image/gif");
-                    xobj.open('GET', 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/' + character + '/' + this.get_file_name(move) + '.gif' + window.connection_string, true);
+                    var endpoint = 'https://smashappstorage.file.core.windows.net/smashappfiles/images/moves/';
+                    xobj.open('GET', endpoint + character + '/' + this.get_file_name(move.name, move.has_angles) + '.gif' + window.connection_string, true);
                     xobj.onreadystatechange = function () {
-                        if (xobj.readyState == 4 && xobj.status == "200") {
+                        if (xobj.readyState == 4 && xobj.status == 200) {
                             var image = new Image();
                             image.src = xobj.responseURL;
                             image['rel:animated_source'] = xobj.responseURL;
@@ -20,6 +21,10 @@
 
                                 resolve(gif);
                             }.bind(this);
+                        }
+
+                        if(xobj.status == 404) {
+                            reject(404);
                         }
                     }.bind(this);
                     xobj.send(null);
@@ -42,7 +47,7 @@
                 }
         },
 
-        get_file_name: function(input) {
+        get_file_name: function(input, has_angle) {
                 var filenames = {'Down B': 'd_b',
                                  'Up B': 'up_b',
                                  'Forward B': 'f_b',
@@ -59,9 +64,11 @@
                                  'Down Air': 'd_air',
                                  'Up Air': 'up_air',
                                  'Dash Attack': 'dash',
-
                     };
                 if(input in filenames) {
+                    if(has_angle) {
+                        return filenames[input] + '_1';
+                    }
                     return filenames[input];
                 }
                 else {
