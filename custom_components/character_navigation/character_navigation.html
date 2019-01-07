@@ -262,8 +262,11 @@
                         if(true) {
                             //this.character_one = event.detail.character_one;
                             //this.character_two = event.detail.character_two;
-                            this.character_one = this.characters[7];
-                            this.character_two = this.characters[18];
+                            console.log(this.characters)
+                            this.character_one = this.characters[Math.floor(Math.random()*this.characters.length)];
+                            this.character_two = this.characters[Math.floor(Math.random()*this.characters.length)];
+                            //this.character_one = this.characters[7];
+                            //this.character_two = this.characters[18];
                             /*this.character_one = {
                                 "name": 'Fox',
                                 "character_sheet_image": 'https://smashappstorage.file.core.windows.net/smashappfiles/images/character_select_images/fox.jpg' + window.connection_string

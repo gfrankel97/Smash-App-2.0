@@ -87,7 +87,19 @@ function load_character_data() {
                         }
                     }
                 }
-                resolve(unfinished_product);
+
+                var final_prod = [];
+                var known_characters = ['bowser', 'captain_falcon', 'falco', 'fox', 'jigglypuff', 'mario', 'marth', 'peach'];
+                for(var product in unfinished_product) {
+                    if(known_characters.indexOf(unfinished_product[product].name) != -1) {
+                        final_prod.push(unfinished_product[product]);
+                    }
+                }
+
+                console.log(final_prod)
+
+
+                resolve(final_prod);
             })
         });
     });
