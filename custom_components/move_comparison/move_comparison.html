@@ -124,7 +124,7 @@
             },
 
             ready: function() {
-                this.get_gif('fox', 'Up Tilt', this.$.move_one_container).then(function(gif) {
+                this.get_gif('fox', {name: 'Up Tilt', has_angle: false}, this.$.move_one_container).then(function(gif) {
                     this.gif_one = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_one_total_frames = gif.get_length();
@@ -136,7 +136,7 @@
                     }.bind(this));
                 }.bind(this));
 
-                this.get_gif('falco', 'Forward Smash', this.$.move_two_container).then(function(gif) {
+                this.get_gif('falco', {name: 'Forward Smash', has_angle: false}, this.$.move_two_container).then(function(gif) {
                     this.gif_two = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_two_total_frames = gif.get_length();
