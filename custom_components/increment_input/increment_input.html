@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../styles/icons.html">
+
+
+<dom-module id="increment-input">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            :host {
+                display: flex;
+                justify-content: center;
+            }
+
+            paper-icon-button {
+                margin: 6px;
+                margin-top: 15px;
+            }
+        </style>
+        <paper-icon-button id="decrement" icon="smash:chevron_left" on-tap="decrement"></paper-icon-button>
+        <paper-icon-button id="increment" icon="smash:chevron_right" on-tap="increment"></paper-icon-button>
+    </template>
+    <script>
+        Polymer({
+            is: 'increment-input',
+
+            properties: {
+            	max_index: {
+            	    type: Number,
+            	    value: 99
+            	},
+                min_index: {
+                    type: Number,
+                    value: 0
+                },
+            	current_index: {
+            	    type: Number,
+            	    value: 0,
+            	},
+                loop: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            ready: function() {
+            },
+
+            set_index: function(new_index) {
+                if (new_index < this.min_index) {
+                    new_index = this.loop ? this.max_index : this.min_index;
+                }
+                else if (new_index > this.max_index) {
+                    new_index = this.loop ? this.min_index : this.max_index;
+                }
+                this.current_index = new_index;
+                this.fire('increment', new_index);
+            },
+
+            increment: function() {
+                this.set_index(this.current_index + 1);
+            },
+
+            decrement: function() {
+                this.set_index(this.current_index - 1);
+            }
+        });
+    </script>
+</dom-module>
