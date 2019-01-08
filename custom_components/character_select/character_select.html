@@ -36,7 +36,7 @@
         <div id="centerer" class="layout horizontal wrap">
             <template is="dom-repeat" items="{{ characters }}" as="character">
                 <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
-                    <div class="card-content character_text">{{ get_display_name(character.name) }}</div>
+                    <div class="card-content character_text">{{ character.display_name }}</div>
                 </paper-card>
             </template>
         </div>
@@ -58,22 +58,6 @@
 
 
             ready: function() {
-            },
-
-            get_display_name: function(name) {
-                name = name.replace('_', ' ');
-                name = name.replace('_', ' ');
-                name = name.replace('mr', 'Mr.');
-                name = name.replace('dr', 'Dr.');
-                name = name.charAt(0).toUpperCase() + name.slice(1);
-                var index = name.indexOf(' ');
-                if(index !== -1) {
-                    name = name.slice(0, index) + ' ' + name.charAt(index + 1).toUpperCase() + name.slice(index + 2);
-                };
-                if(name == 'Mr. game and watch') { name = 'Mr. Game and Watch'; }
-                if(name == 'D K') { name = 'Donkey Kong'; }
-                if(name == 'Samus Aran') { name = 'Samus'; }
-                return name;
             },
 
             character_tapped: function(event) {

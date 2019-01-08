@@ -3,12 +3,20 @@
 
 <link rel="import" href="../tiered_chip/tiered_chip.html">
 <link rel="import" href="../smash_card_content/smash_card_content.html">
+<link rel="import" href="../move_select_dialog/move_select_dialog.html">
 
 <dom-module id="character-matchup">
     <template>
         <style is="custom-style" include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+            }
             paper-card {
                 width: 100%;
+            }
+            move-select-dialog {
+                width: 100%;
+                height: 100%;
             }
             .character_one_image {
                 float: left;
@@ -47,30 +55,32 @@
             }
         </style>
 
+        <move-select-dialog id="move_select_dialog" characters="{{ characters }}" two_characters></move-select-dialog>
+
         <paper-card>
             <div class="card-content header">
                 <iron-image sizing="cover" class="shared_image_styles character_one_image" src="{{ character_one.character_select_image }}"></iron-image>
                 <div id="character_one_header" class="shared_header_styles">
-                    {{ character_one.name }}
+                    {{ character_one.display_name }}
                 </div>
 
                 <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_select_image }}"></iron-image>
                 <div id="character_two_header" class="shared_header_styles">
-                    {{ character_two.name }}
+                    {{ character_two.display_name }}
                 </div>
             </div>
             <div class="card-content">
-                <smash-card-content name="Speed" collapse_categories="[[ get_speed_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
+                <smash-card-content name="Speed" collapse_categories="[[ speed_categories ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
 
                 </smash-card-content>
             </div>
             <div class="card-content">
-                <smash-card-content name="Punish" collapse_categories="[[ get_punish_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
+                <smash-card-content name="Punish" collapse_categories="[[ punish_categories ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
 
                 </smash-card-content>
             </div>
             <div class="card-content">
-                <smash-card-content name="Defense" collapse_categories="[[ get_defense_categories() ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
+                <smash-card-content name="Defense" collapse_categories="[[ defense_categories ]]" tier_chip_one_letter="S" tier_chip_two_letter="S"></smash-card-content>
             </div>
         </paper-card>
     </template>
@@ -79,6 +89,10 @@
             is: 'character-matchup',
 
             properties: {
+                characters: {
+                    type: Array,
+                    value: []
+                },
             	character_one: {
             		type: Object,
             		value: {},
@@ -88,10 +102,51 @@
                     type: Object,
                     value: {},
                     observer: 'character_two_changed'
+                },
+                characters_chosen: {
+                    type: Boolean,
+                    value: false
+                },
+                speed_categories: {
+                    type: Array,
+                    value: []
+                },
+                punish_categories: {
+                    type: Array,
+                    value: []
+                },
+                defense_categories: {
+                    type: Array,
+                    value: []
                 }
             },
 
+            listeners: {
+                'dialog_confirm': 'characters_selected'
+            },
+
             ready: function() {
+                this.$.move_select_dialog.show();
+            },
+
+            navigated_to: function() {
+                this.$.move_select_dialog.show();
+            },
+
+            characters_selected: function(event) {
+                this.characters_chosen = true;
+                for(var i in this.characters) {
+                    if(this.characters[i].display_name == event.detail.character_one) {
+                        this.character_one = this.characters[i];
+                    }
+                    if(this.characters[i].display_name == event.detail.character_two) {
+                        this.character_two = this.characters[i];
+                    }
+                }
+
+                this.speed_categories = this.get_speed_categories();
+                this.punish_categories = this.get_punish_categories();
+                this.defense_categories = this.get_defense_categories();
             },
 
             character_one_changed: function() {
@@ -101,62 +156,77 @@
             },
 
             get_speed_categories: function() {
-                return [
-                    {
-                        name: 'Dash Speed',
-                        value: [this.character_one['Running Speed'].ranking, this.character_two['Running Speed'].ranking]
-                    },
-                    {
-                        name:'Fall Speed',
-                        value: [this.character_one['Avg. Fall Speed'].ranking, this.character_two['Avg. Fall Speed'].ranking]
-                    },
-                    // {
-                    //     name: 'Jump Squat', 
-                    //     value: ''
-                    // },
-                    // {
-                    //     name: 'Aerial Drift',
-                    //     value: ''
-                    // },
-                    {
-                        name: 'Jump Height',
-                        value: [this.character_one['Total Jump Height'].ranking, this.character_two['Total Jump Height'].ranking]
-                    }
-                ]
+                if(this.characters_chosen) {
+                    return [
+                        {
+                            name: 'Dash Speed',
+                            value: [this.character_one['Running Speed'].ranking, this.character_two['Running Speed'].ranking]
+                        },
+                        {
+                            name:'Fall Speed',
+                            value: [this.character_one['Avg. Fall Speed'].ranking, this.character_two['Avg. Fall Speed'].ranking]
+                        },
+                        // {
+                        //     name: 'Jump Squat', 
+                        //     value: ''
+                        // },
+                        // {
+                        //     name: 'Aerial Drift',
+                        //     value: ''
+                        // },
+                        {
+                            name: 'Jump Height',
+                            value: [this.character_one['Total Jump Height'].ranking, this.character_two['Total Jump Height'].ranking]
+                        }
+                    ]
+                }
+                else {
+                    return [];
+                }
             },
 
             get_punish_categories: function() {
-                return [
-                    // {
-                    //     name: 'Launchers',
-                    //     value: ''
-                    // },
-                    // {
-                    //     name:'Edgeguarding',
-                    //     value: ''
-                    // },
-                    {
-                        name: 'Grab Range', 
-                        value: [this.character_one['Grab Range'].ranking, this.character_two['Grab Range'].ranking]
-                    }
-                ]
+                if(this.characters_chosen) {
+                    return [
+                        // {
+                        //     name: 'Launchers',
+                        //     value: ''
+                        // },
+                        // {
+                        //     name:'Edgeguarding',
+                        //     value: ''
+                        // },
+                        {
+                            name: 'Grab Range', 
+                            value: [this.character_one['Grab Range'].ranking, this.character_two['Grab Range'].ranking]
+                        }
+                    ]
+                }
+                else {
+                    return [];
+                }
             },
 
             get_defense_categories: function() {
-                return [
-                    {
-                        name: 'Weight',
-                        value: [this.character_one['Weight'].ranking, this.character_two['Weight'].ranking]
-                    },
-                    // {
-                    //     name: 'Out of Shield',
-                    //     value: ''
-                    // },
-                    // {
-                    //     name: 'Shield Size',
-                    //     value: ''
-                    // }
-                ]
+                if(this.characters_chosen) {
+                    return [
+                        {
+                            name: 'Weight',
+                            value: [this.character_one['Weight'].ranking, this.character_two['Weight'].ranking]
+                        },
+                        // {
+                        //     name: 'Out of Shield',
+                        //     value: ''
+                        // },
+                        // {
+                        //     name: 'Shield Size',
+                        //     value: ''
+                        // }
+                    ]
+                }
+                else {
+                    return [];
+                }
             }
         });
     </script>

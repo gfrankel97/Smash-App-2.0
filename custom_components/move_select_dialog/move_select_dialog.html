@@ -1,0 +1,156 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+
+<link rel="import" href="../../bower_components/paper-dropdown-input/paper-dropdown-input.html">
+
+
+
+<dom-module id="move-select-dialog">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+            }
+            paper-dialog {
+                max-width: 450px;
+            }
+            .label_and_input > div {
+                display: inline-block;
+                width: 100px;
+            }
+            h2 {
+                word-wrap: break-word;
+                white-space: normal;
+            }
+            paper-button {
+                float: right;
+            }
+        </style>
+
+        <paper-dialog id="dialog" modal>
+            <h2>{{ get_title() }}</h2>
+            <div class="label_and_input">
+                <div>{{ get_character_label() }}</div>
+                <paper-dropdown-input id="characters_dropdown_one" items='["hack"]'></paper-dropdown-input>
+            </div>
+            <template is="dom-if" if="[[ show_moves ]]">
+                <div class="label_and_input">
+                    <div>{{ get_move_label() }}</div>
+                    <paper-dropdown-input id="moves_dropdown_one" items='["hack"]'></paper-dropdown-input>
+                </div>
+            </template>
+            <template is="dom-if" if="[[ two_characters ]]">
+                <div class="label_and_input">
+                    <div>Character Two:</div>
+                    <paper-dropdown-input id="characters_dropdown_two" items='["hack"]'></paper-dropdown-input>
+                </div>
+                <template is="dom-if" if="[[ show_moves ]]">
+                    <div class="label_and_input">
+                        <div>Move Two:</div>
+                        <paper-dropdown-input id="moves_dropdown_two" items='["hack"]'></paper-dropdown-input>
+                    </div>
+                </template>
+            </template>
+            <paper-button dialog-confirm on-tap="send_characters">Ok</paper-button>
+            <paper-button dialog-dismiss>Close</paper-button>
+        </paper-dialog>
+    </template>
+    <script>
+        Polymer({
+            is: 'move-select-dialog',
+
+            properties: {
+                characters: {
+                    type: Array,
+                    value: []
+                },
+                character_items: {
+                    type: Array,
+                    value: []
+                },
+                move_items: {
+                    type: Array,
+                    value: []
+                },
+                two_characters: {
+                    type: Boolean,
+                    value: false
+                },
+                show_moves: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            listeners: {
+            },
+
+            ready: function() {
+                this.async(function() {
+                    for(var char in this.characters) {
+                        this.push('character_items', this.characters[char].display_name)
+                    }
+                    for(var i in this.characters[0].moves) {
+                        if(this.characters[0].moves[i].name != 'NO DISPLAY NAME') {
+                            this.push('move_items', this.characters[0].moves[i].name);
+                        }
+                    }
+                    this.$$('#characters_dropdown_one').items = this.character_items;
+                    if(this.show_moves) {
+                        this.$$('#moves_dropdown_one').items = this.move_items;
+                    }
+    
+                    if(this.two_characters) {
+                        this.$$('#characters_dropdown_two').items = this.character_items;
+                        if(this.show_moves) {
+                            this.$$('#moves_dropdown_two').items = this.move_items;
+                        }
+                    }
+                }.bind(this), 1);
+            },
+
+            get_character_label: function() {
+                return this.two_characters ? 'Character One: ' : 'Character:';
+            },
+
+            get_move_label: function() {
+                return this.two_characters ? 'Move One: ' : 'Move:';
+            },
+
+            send_characters: function() {
+                var event_payload = {};
+                event_payload.character_one = this.$$('#characters_dropdown_one').value;
+                if(this.show_moves) {
+                    event_payload.move_one = this.$$('#moves_dropdown_one').value;
+                }
+
+                if(this.two_characters) {
+                    event_payload.character_two = this.$$('#characters_dropdown_two').value;
+                    if(this.show_moves) {
+                        event_payload.move_two = this.$$('#moves_dropdown_two').value;
+                    }
+                }
+                this.fire('dialog_confirm', event_payload);
+            },
+
+            get_title: function() {
+                if(this.two_characters && this.show_moves) {
+                    return 'Select characters and moves to compare';
+                }
+                if(this.show_moves) {
+                    return 'Select character and move';
+                }
+                if(this.two_characters) {
+                    return 'Select characters to compare';
+                }
+            },
+
+            show: function() {
+                this.$.dialog.open();
+            }
+        });
+    </script>
+</dom-module>

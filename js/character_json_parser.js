@@ -96,9 +96,6 @@ function load_character_data() {
                     }
                 }
 
-                console.log(final_prod)
-
-
                 resolve(final_prod);
             })
         });
