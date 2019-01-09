@@ -12,12 +12,13 @@
             .character_card {
                 display: inline-block;
                 text-align: left;
-                max-height: 200px;
+                max-height: 300px;
                 width: 150px;
                 margin: 4px;
                 --paper-card-background-color: white;
                 --paper-card-header-image: {
-                  --iron-image-height: 100px;
+                    --iron-image-height: 200px;
+                    --iron-image-width: 150px;
                 }
             }
             .character_card:hover {
@@ -27,6 +28,8 @@
                 @apply --paper-font-headline;
                 padding: 0px;
                 margin: 8px;
+                height: 32px;
+                font-size: 100%
             }
              #centerer {
                 display: flex;
@@ -36,7 +39,7 @@
         <div id="centerer" class="layout horizontal wrap">
             <template is="dom-repeat" items="{{ characters }}" as="character">
                 <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
-                    <div class="card-content character_text">{{ character.display_name }}</div>
+                    <!-- <div class="card-content character_text">{{ character.display_name }}</div> -->
                 </paper-card>
             </template>
         </div>
