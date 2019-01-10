@@ -21,7 +21,7 @@
             }
 
             #move_name {
-                font-size: 24px;
+                font-size: 22px;
                 padding-top: 16px;
                 display: inline-block;
             }
@@ -122,6 +122,7 @@
             },
 
             ready: function() {
+                this.cycle_max = Object.keys(this.move.hitboxes).length;
             },
 
             move_changed: function() {
@@ -146,7 +147,7 @@
             cycle_move: function(event) {
                 if(event.path[0].id == 'right_arrow') {
                     this.cycle++;
-                    if(this.cycle > 3) {
+                    if(this.cycle > this.cycle_max) {
                         this.cycle = 1;
                     }
                 }
@@ -157,7 +158,6 @@
                     }
                 }
                 this.move_changed();
-                this.$.frame_scrubber.reset();
             },
 
             set_move_name: function() {
@@ -221,8 +221,17 @@
 
             get_move_name: function(cycle) {
                 if(this.move.has_multiples) {
-                    //ADD ANGLES AND CYCLING
-                    return this.move.name + ' ' + cycle;
+                    var suffix = ''
+                    if(cycle == 2 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
+                        return this.move.name + ' - Upward';
+                    }
+                    if(cycle == 3 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
+                        return this.move.name + ' - Downward';
+                    }
+                    if(this.move.name == 'Jab') {
+                        return this.move.name + ' ' + cycle;
+                    }
+                    return this.move.name;
                 }
                 return this.move.name;
             },
