@@ -524,6 +524,8 @@ Custom property | Description | Default
         this.value = this._clampValue(this.value - this.step);
       },
 
+      _setExpand: function () {},
+
       _updateKnob: function(value, min, max, snaps, step) {
         this.setAttribute('aria-valuemin', min);
         this.setAttribute('aria-valuemax', max);
