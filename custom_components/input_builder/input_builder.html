@@ -56,35 +56,35 @@
             
             properties: {
                 inputs: {
-                	type: Array,
-                	value: []
+                    type: Array,
+                    value: []
                 },
                 formatted_inputs: {
-                	type: Array,
-                	value: []
+                    type: Array,
+                    value: []
                 }
             },
 
             is_array: function(obj) {
-            	return Array.isArray(obj);
+                return Array.isArray(obj);
             },
 
             is_last_button_item: function(arr, element) {
                 var arr = this.get_separate_buttons(arr);
-            	if(arr[arr.length - 1] == element) {
-            		return true;
-            	}
-            	else {
-            		return false;
-            	}
+                if(arr[arr.length - 1] == element) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
             },
 
             is_last_comma_item: function(arr, element) {
                 if(arr[arr.length - 1] == element) {
-                	return true;
+                    return true;
                 }
                 else {
-                	return false;
+                    return false;
                 }
             },
 
@@ -107,7 +107,7 @@
             },
             
             get_combined_source: function(obj) {
-            	return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + obj + '.png' + window.connection_string;
+                return 'https://smashappstorage.file.core.windows.net/smashappfiles/images/gcc_buttons/' + obj + '.png' + window.connection_string;
             }
         });
     </script>
