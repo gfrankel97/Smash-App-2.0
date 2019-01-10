@@ -13,6 +13,7 @@
                             image.src = xobj.responseURL;
                             image['rel:animated_source'] = xobj.responseURL;
                             image.onload = function() {
+                                this.clean_up_container(container);
                                 container.appendChild(image);
 
                                 var gif = new SuperGif({gif: image,

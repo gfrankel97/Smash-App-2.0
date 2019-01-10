@@ -54,6 +54,10 @@
             .jsgif canvas{
                 width: 100%;
             }
+
+            #gif-container {
+                height: 30%;
+            }
         </style>
         <paper-card id="move_card">
             <div id="gif_container"></div>
@@ -127,7 +131,7 @@
 
             move_changed: function() {
                 this.current_gif = undefined;
-                this.clean_up_container(this.$.gif_container);
+                //this.clean_up_container(this.$.gif_container);
                 clearInterval(this.interval)
                 this.get_gif(this.move.character, this.move, this.cycle, this.$.gif_container).then(function(gif) {
                     this.current_gif = gif;
