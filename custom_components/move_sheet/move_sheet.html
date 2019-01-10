@@ -145,13 +145,13 @@
             },
 
             cycle_move: function(event) {
-                if(event.path[0].id == 'right_arrow') {
+                if(event.detail.x > 100) {
                     this.cycle++;
                     if(this.cycle > this.cycle_max) {
                         this.cycle = 1;
                     }
                 }
-                if(event.path[0].id == 'left_arrow') {
+                if(event.detail.x <= 100) {
                     this.cycle--;
                     if(this.cycle < 1) {
                         this.cycle = 3;
