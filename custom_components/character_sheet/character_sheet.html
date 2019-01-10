@@ -142,7 +142,7 @@
             },
 
             get_move_categories: function() {
-                return ['Smash Attacks','Special Attacks', 'Aerials', 'Tilts', 'Grabs','Defensive'];
+                return ['Smash Attacks','Special Attacks', 'Aerials', 'Normals', 'Grabs','Defensive'];
             },
 
             get_moves_by_category: function(category) {
@@ -156,8 +156,10 @@
                 }
                 for(var i=0; i < this.character.moves.length; i++) {
                     var identifier = this.character.moves[i].name.split(' ')[this.character.moves[i].name.split(' ').length - 1];
-
                     if(category == name_to_category[identifier]) {
+                        to_return.push(this.character.moves[i]);
+                    }
+                    if(category == 'Normals' && (identifier == 'Tilt' || identifier == 'Jab')) {
                         to_return.push(this.character.moves[i]);
                     }
                 }

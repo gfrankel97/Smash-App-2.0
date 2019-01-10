@@ -104,25 +104,25 @@ function load_character_data() {
 
 function get_final_product(data_obj_1, data_obj_2) {
         //put in data
-        var has_angles = {
-            "bowser": ['ftilt'],
-            'captain_falcon': ['ftilt'],
-            'd_k': ['ftilt'],
-            'dr_mario': ['ftilt', 'fsmash'],
-            'mario': ['ftilt', 'fsmash'],
-            'falco': ['ftilt'],
-            'fox': ['ftilt'],
-            'luigi': ['ftilt', 'fsmash'],
-            'ganondorf': ['ftilt', 'fsmash'],
-            'ice_climbers': ['ftilt'],
-            'jigglypuff': ['ftilt'],
-            'kirby': ['ftilt', 'fsmash'],
-            'mewtwo': ['ftilt'],
-            'ness': ['ftilt'],
-            'pikachu': ['ftilt'],
-            'samus_aran': ['ftilt', 'fsmash'],
-            'yoshi': ['ftilt', 'fsmash'],
-            'zelda': ['ftilt']
+        var has_multiples = {
+            "bowser": ['ftilt', 'jab'],
+            'captain_falcon': ['ftilt', 'jab'],
+            'd_k': ['ftilt', 'jab'],
+            'dr_mario': ['ftilt', 'fsmash', 'jab'],
+            'mario': ['ftilt', 'fsmash', 'jab'],
+            'falco': ['ftilt', 'jab'],
+            'fox': ['ftilt', 'jab'],
+            'luigi': ['ftilt', 'fsmash', 'jab'],
+            'ganondorf': ['ftilt', 'fsmash', 'jab'],
+            'ice_climbers': ['ftilt', 'jab'],
+            'jigglypuff': ['ftilt', 'jab'],
+            'kirby': ['ftilt', 'fsmash', 'jab'],
+            'mewtwo': ['ftilt', 'jab'],
+            'ness': ['ftilt', 'jab'],
+            'pikachu': ['ftilt', 'jab'],
+            'samus_aran': ['ftilt', 'fsmash', 'jab'],
+            'yoshi': ['ftilt', 'fsmash', 'jab'],
+            'zelda': ['ftilt', 'jab']
         };
         data_obj_2.moves = [];
         for(var key in data_obj_1) {
@@ -132,9 +132,9 @@ function get_final_product(data_obj_1, data_obj_2) {
                 data_obj_2.moves[data_obj_2.moves.length - 1].active = true;
                 data_obj_2.moves[data_obj_2.moves.length - 1].name = get_display_name(key);
                 data_obj_2.moves[data_obj_2.moves.length - 1].input = get_input(key);
-                if(data_obj_2.name in has_angles) {
-                    if(has_angles[data_obj_2.name].indexOf(key) != -1) {
-                        data_obj_2.moves[data_obj_2.moves.length - 1].has_angles = true;
+                if(data_obj_2.name in has_multiples) {
+                    if(has_multiples[data_obj_2.name].indexOf(key) != -1) {
+                        data_obj_2.moves[data_obj_2.moves.length - 1].has_multiples = true;
                     }
                 }
                 if(data_obj_2.moves[data_obj_2.moves.length - 1].name.charAt(data_obj_2.moves[data_obj_2.moves.length - 1].name.length - 1) == 'B') {
@@ -169,6 +169,7 @@ function get_display_name(input) {
         'dsmash': 'Down Smash',
         'usmash': 'Up Smash',
         'fsmash': 'Forward Smash',
+        'jab': 'Jab',
         'dtilt': 'Down Tilt',
         'utilt': 'Up Tilt',
         'ftilt': 'Forward Tilt',
@@ -178,6 +179,9 @@ function get_display_name(input) {
         'sideSpecial': 'Forward B',
         'neutralSpecial': 'Neutral B',
         'taunt': 'Taunt'
+    }
+    if(!(input in input_to_display_name)) {
+        //console.log(input) MISSING DATA
     }
     return input in input_to_display_name ? input_to_display_name[input] : 'NO DISPLAY NAME';
 }
@@ -199,6 +203,7 @@ function get_input(name) {
         'dsmash': ['control_down + a', 'cstick_down'],
         'usmash': ['control_up + a', 'cstick_up'],
         'fsmash': ['control_right + a', 'cstick_right', 'control_left + a', 'cstick_left'],
+        'jab': ['a'],
         'dtilt': ['control_down + a'],
         'utilt': ['control_up + a'],
         'ftilt': ['control_right + a', 'control_left + a'],
