@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../behaviors/gif_behavior.html">
 <link rel="import" href="../smash_card_content/smash_card_content.html">
@@ -12,14 +13,17 @@
 <dom-module id="move-sheet">
     <template>
         <style>
+            :host {
+                display: block;
+            }
             paper-card {
                 width: 100%;
             }
 
             #move_name {
                 font-size: 24px;
-                border-bottom: 1px solid rgb(229, 229, 229);
-                padding-top: 9px;
+                padding-top: 16px;
+                display: inline-block;
             }
 
             span {
@@ -31,13 +35,37 @@
                 font-weight: bold;
             }
 
+            .name_div {
+                text-align: center;
+                height: 64px;
+                border-bottom: 1px solid rgb(229, 229, 229);
+            }
+
+            #right_arrow {
+                margin-top: 8px;
+                float: right;
+            }
+
+            #left_arrow {
+                margin-top: 8px;
+                float: left;
+            }
+
             .jsgif canvas{
                 width: 100%;
             }
         </style>
         <paper-card id="move_card">
             <div id="gif_container"></div>
-            <div id="move_name" class="card-content">[[ move.name ]]</div>
+            <div class="name_div">
+                <template is="dom-if" if="[[ move.has_multiples ]]">
+                    <paper-icon-button id="left_arrow" icon="smash:chevron_left" on-tap="cycle_move"></paper-icon-button>
+                </template>
+                <div id="move_name" class="card-content">[[ get_move_name(cycle) ]]</div>
+                <template is="dom-if" if="[[ move.has_multiples ]]">
+                    <paper-icon-button id="right_arrow" icon="smash:chevron_right" on-tap="cycle_move"></paper-icon-button>
+                </template>
+            </div>
             <smash-card-content id="frame_scrubber_card_content" class="card-content" name="Scrubber" add_bottom_border>
                 <frame-scrubber id="frame_scrubber" slot="collapse_content" class="collapse-content card-content" total_frames="[[ total_frames ]]" current_frame="{{ current_frame }}"></frame-scrubber>
             </smash-card-content>
@@ -81,6 +109,10 @@
                 current_frame: {
                     type: Number,
                     value: -1
+                },
+                cycle: {
+                    type: Number,
+                    value: 1
                 }
             },
 
@@ -95,19 +127,37 @@
             move_changed: function() {
                 this.current_gif = undefined;
                 this.clean_up_container(this.$.gif_container);
-                this.get_gif(this.move.character, this.move, this.$.gif_container).then(function(gif) {
+                clearInterval(this.interval)
+                this.get_gif(this.move.character, this.move, this.cycle, this.$.gif_container).then(function(gif) {
                     this.current_gif = gif;
                     gif.load(function() {
                         gif.play()
                         this.total_frames = gif.get_length();
                         gif.get_canvas().addEventListener('click', this.play_pause_tapped.bind(this));
-                        setInterval(function() {
+                        this.interval = setInterval(function() {
                             if(gif.get_playing()) {
                                 this.$.frame_scrubber.current_frame = gif.get_current_frame();
                             }
                         }.bind(this), 50)
                     }.bind(this));
                 }.bind(this));
+            },
+
+            cycle_move: function(event) {
+                if(event.path[0].id == 'right_arrow') {
+                    this.cycle++;
+                    if(this.cycle > 3) {
+                        this.cycle = 1;
+                    }
+                }
+                if(event.path[0].id == 'left_arrow') {
+                    this.cycle--;
+                    if(this.cycle < 1) {
+                        this.cycle = 3;
+                    }
+                }
+                this.move_changed();
+                this.$.frame_scrubber.reset();
             },
 
             set_move_name: function() {
@@ -167,6 +217,14 @@
                     return arr[0];
                 }
                 return arr.join(', ');
+            },
+
+            get_move_name: function(cycle) {
+                if(this.move.has_multiples) {
+                    //ADD ANGLES AND CYCLING
+                    return this.move.name + ' ' + cycle;
+                }
+                return this.move.name;
             },
 
             current_frame_changed: function(event) {

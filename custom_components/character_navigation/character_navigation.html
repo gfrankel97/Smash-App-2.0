@@ -190,7 +190,6 @@
             },
 
             ready: function() {
-                //alert('IM CACHED')
                 window.connection_string = '?st=2019-01-04T04%3A38%3A14Z&se=2020-01-05T04%3A38%3A00Z&sp=rl&sv=2018-03-28&sr=s&sig=HEgPEvrg%2F34yozJPQPfkKQANMpifiQnsKNddAFGfi2s%3D';
                 this.character_select_bool = true;
                 this.get_character_data();
@@ -263,8 +262,12 @@
                         break;
                     case 'move_sheet':
                         this.move_sheet_bool = true;
-                        this.move_sheet_move = undefined;
                         this.move_sheet_move = event.detail.move;
+                        // if(event.detail.cycle) {
+                        //     this.$$('move-sheet').cycle = event.detail.cycle;
+                        //     this.$$('move-sheet').move_changed();
+                        //     console.log(this.$$('move-sheet'))
+                        // }
                         break;
                     default:
                         this.character_select_bool = true;
