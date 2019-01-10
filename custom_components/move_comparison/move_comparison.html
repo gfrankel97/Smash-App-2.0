@@ -6,6 +6,8 @@
 <link rel="import" href="../smash_card_content/smash_card_content.html">
 <link rel="import" href="../frame_scrubber/frame_scrubber.html">
 <link rel="import" href="../input_builder/input_builder.html">
+<link rel="import" href="../move_select_dialog/move_select_dialog.html">
+
 
 <dom-module id="move-comparison">
     <template>
@@ -15,8 +17,6 @@
             }
             paper-card {
                 width: 100%;
-            }
-            smash-card-content {
             }
             .card-content {
                 padding: 0px;
@@ -73,6 +73,9 @@
                 padding: 11px 0px;
             }
         </style>
+
+        <move-select-dialog id="move_select_dialog" characters="{{ characters }}" two_characters show_moves></move-select-dialog>
+
         <paper-card>
             <div class="card-content">
                 <div class="header">
@@ -87,9 +90,9 @@
                 <smash-card-content  name="[[ scrubber_two_name ]]" add_bottom_border>
                         <frame-scrubber id="frame_scrubber_two" slot="collapse_content" class="collapse-content" total_frames="[[ move_two_total_frames ]]" current_frame="{{ move_two_current_frame }}"></frame-scrubber>
                     </smash-card-content>
-                <smash-card-content  name="Inputs" add_bottom_border>
+                <!-- <smash-card-content  name="Inputs" add_bottom_border>
                     <input-builder slot="collapse_content" class="collapse-content" inputs="{{ get_tech() }}"></input-builder>
-                </smash-card-content>
+                </smash-card-content> -->
             </div>
         </paper-card>
     </template>
@@ -102,9 +105,21 @@
             ],
 
             properties: {
+                characters: {
+                   type: Array,
+                   value: []
+                },
                 card_categories: {
                    type: Array,
                    value: []
+                },
+                character_one: {
+                    type: String,
+                    value: ''
+                },
+                character_two: {
+                    type: String,
+                    value: ''
                 },
                 move_one: {
                     type: Object,
@@ -114,6 +129,14 @@
                     type: Object,
                     value: {}
                 },
+                move_one_cycle: {
+                    type: Number,
+                    value: 1
+                },
+                move_two_cycle: {
+                    type: Number,
+                    value: 1
+                },
                 scrubber_one_name: String,
                 scrubber_two_name: String
             },
@@ -121,10 +144,23 @@
             listeners: {
                 'current_frame_changed': 'current_frame_changed',
                 'play_pause_tapped': 'play_pause_tapped',
+                'dialog_confirm': 'moves_selected'
             },
 
-            ready: function() {
-                this.get_gif('fox', {name: 'Up Tilt', has_multiple: false}, 1 ,this.$.move_one_container).then(function(gif) {
+            navigated_to: function() {
+                this.$.move_select_dialog.show();
+            },
+
+            moves_selected: function(event) {
+                this.character_one = event.detail.character_one;
+                this.character_two = event.detail.character_two;
+                this.move_one = this.get_move_from_dialog(this.character_one, event.detail.move_one);
+                this.move_two = this.get_move_from_dialog(this.character_two, event.detail.move_two);
+
+                this.scrubber_one_name = this.move_one.name + ' Scrubber';
+                this.scrubber_two_name = this.move_two.name + ' Scrubber';
+
+                this.get_gif(this.character_one, this.move_one, this.move_one_cycle,this.$.move_one_container).then(function(gif) {
                     this.gif_one = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_one_total_frames = gif.get_length();
@@ -136,7 +172,7 @@
                     }.bind(this));
                 }.bind(this));
 
-                this.get_gif('falco', {name: 'Forward Smash', has_multiple: false}, 1 , this.$.move_two_container).then(function(gif) {
+                this.get_gif(this.character_two, this.move_two, this.move_two_cycle, this.$.move_two_container).then(function(gif) {
                     this.gif_two = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_two_total_frames = gif.get_length();
@@ -148,10 +184,50 @@
                     }.bind(this));
                 }.bind(this));
 
-                this.move_one = {name: 'Up Tilt'};
-                this.move_two = {name: 'Forward Smash'};
-                this.scrubber_one_name = this.move_one.name + ' Scrubber';
-                this.scrubber_two_name = this.move_two.name + ' Scrubber';
+            },
+
+            get_move_from_dialog: function(character, move) {
+                for(var i in this.characters) {
+                    if(this.characters[i].display_name == character) {
+                        for(var j in this.characters[i].moves) {
+                            if(this.characters[i].moves[j].name == move) {
+                                return this.characters[i].moves[j];
+                            }
+                        }
+                    }
+                }
+            },
+
+            ready: function() {
+                this.$.move_select_dialog.show();
+                // this.get_gif('fox', {name: 'Up Tilt', has_multiple: false}, 1 ,this.$.move_one_container).then(function(gif) {
+                //     this.gif_one = gif;
+                //     this.setup_gif(gif).then(function() {
+                //         this.move_one_total_frames = gif.get_length();
+                //         this.interval_one = setInterval(function() {
+                //             if(gif.get_playing()) {
+                //                 this.move_one_current_frame = gif.get_current_frame();
+                //             }
+                //         }.bind(this), 50)
+                //     }.bind(this));
+                // }.bind(this));
+
+                // this.get_gif('falco', {name: 'Forward Smash', has_multiple: false}, 1 , this.$.move_two_container).then(function(gif) {
+                //     this.gif_two = gif;
+                //     this.setup_gif(gif).then(function() {
+                //         this.move_two_total_frames = gif.get_length();
+                //         this.interval_two = setInterval(function() {
+                //             if(gif.get_playing()) {
+                //                 this.move_two_current_frame = gif.get_current_frame();
+                //             }
+                //         }.bind(this), 50)
+                //     }.bind(this));
+                // }.bind(this));
+
+                // this.move_one = {name: 'Up Tilt'};
+                // this.move_two = {name: 'Forward Smash'};
+                // this.scrubber_one_name = this.move_one.name + ' Scrubber';
+                // this.scrubber_two_name = this.move_two.name + ' Scrubber';
             },
 
             setup_gif: function(gif) {

@@ -111,7 +111,7 @@
                     <paper-item id='character_select_item' on-tap="set_view">Character Select</paper-item>
                     <paper-item id='character_matchup_item' on-tap="set_view">Character Matchup</paper-item>
                     <!-- <paper-item id='move_sheet_item' on-tap="set_view">Move Data</paper-item> -->
-                    <!-- <paper-item id='move_comparison_item' on-tap="set_view">Move Comparison</paper-item> -->
+                    <paper-item id='move_comparison_item' on-tap="set_view">Move Comparison</paper-item>
                 </div>
              </div>
         </app-drawer>
@@ -125,7 +125,7 @@
             <character-matchup character_one="{{ character_one }}" character_two="{{ character_two }}" characters="{{ characters }}"></character-matchup>
        </template>
        <template is="dom-if" if="{{ move_comparison_bool }}" restamp="true">
-            <move-comparison></move-comparison>
+            <move-comparison characters="{{ characters }}"></move-comparison>
        </template>
        <template is="dom-if" if="{{ move_sheet_bool }}" restamp="true">
             <move-sheet id="move_sheet" move="{{ move_sheet_move }}"></move-sheet>
@@ -259,15 +259,13 @@
                         break;
                     case 'move_comparison_item':
                         this.move_comparison_bool = true;
+                        if(this.$$('move-comparison')) {
+                            this.$$('move-comparison').navigated_to();
+                        }
                         break;
                     case 'move_sheet':
                         this.move_sheet_bool = true;
                         this.move_sheet_move = event.detail.move;
-                        // if(event.detail.cycle) {
-                        //     this.$$('move-sheet').cycle = event.detail.cycle;
-                        //     this.$$('move-sheet').move_changed();
-                        //     console.log(this.$$('move-sheet'))
-                        // }
                         break;
                     default:
                         this.character_select_bool = true;
