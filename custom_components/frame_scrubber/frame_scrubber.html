@@ -11,6 +11,7 @@
         <style is="custom-style" include="iron-flex iron-flex-alignment">
             :host .top{
                 display: flex;
+                width: 100%;
             }
 
             paper-slider {
@@ -27,11 +28,12 @@
                 margin-top: 15px;
             }
         </style>
-        <div class="top">
-            <paper-icon-button id="play_pause_icon" icon="smash:pause" on-tap="play_pause_tapped"></paper-icon-button>
-            <paper-slider id="scrubber" pin snaps min="1" value="[[ current_frame ]]" on-change="drag_end" on-immediate-value-change="drag" expand></paper-slider>
-        </div>
-        <increment-input id="stepper" loop max_index="[[ total_frames ]]" current_index="[[ current_frame ]]"></increment-input>
+        <increment-input id="stepper" loop max_index="[[ total_frames ]]" current_index="[[ current_frame ]]">
+            <div class="top" slot="slider">
+                <paper-icon-button id="play_pause_icon" icon="smash:pause" on-tap="play_pause_tapped"></paper-icon-button>
+                <paper-slider id="scrubber" pin snaps min="1" value="[[ current_frame ]]" on-change="drag_end" on-immediate-value-change="drag" expand></paper-slider>
+            </div>
+        </increment-input>
     </template>
     <script>
         Polymer({

@@ -15,8 +15,17 @@
                 margin: 6px;
                 margin-top: 15px;
             }
+
+            #decrement {
+                float: left;
+            }
+
+            #increment {
+                float: right;
+            }
         </style>
         <paper-icon-button id="decrement" icon="smash:chevron_left" on-tap="decrement"></paper-icon-button>
+        <slot name="slider"></slot>
         <paper-icon-button id="increment" icon="smash:chevron_right" on-tap="increment"></paper-icon-button>
     </template>
     <script>
