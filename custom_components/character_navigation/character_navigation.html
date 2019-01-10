@@ -110,7 +110,7 @@
                 <div role="listbox">
                     <paper-item id='character_select_item' on-tap="set_view">Character Select</paper-item>
                     <paper-item id='character_matchup_item' on-tap="set_view">Character Matchup</paper-item>
-                    <!-- <paper-item id='move_sheet_item' on-tap="set_view">Move Data</paper-item> -->
+                    <paper-item id='move_sheet_item' on-tap="set_view">Move Data</paper-item>
                     <paper-item id='move_comparison_item' on-tap="set_view">Move Comparison</paper-item>
                 </div>
              </div>
@@ -128,7 +128,7 @@
             <move-comparison characters="{{ characters }}"></move-comparison>
        </template>
        <template is="dom-if" if="{{ move_sheet_bool }}" restamp="true">
-            <move-sheet id="move_sheet" move="{{ move_sheet_move }}"></move-sheet>
+            <move-sheet id="move_sheet" move="{{ move_sheet_move }}" characters="{{ characters }}"></move-sheet>
        </template>
     </template>
     <script>
@@ -230,6 +230,7 @@
                 else {
                     to_view = event.target.id;
                 }
+                console.log(to_view)
                 this.character_select_bool = false;
                 this.character_sheet_bool = false;
                 this.character_matchup_bool = false;
@@ -266,6 +267,12 @@
                     case 'move_sheet':
                         this.move_sheet_bool = true;
                         this.move_sheet_move = event.detail.move;
+                        break;
+                    case 'move_sheet_item':
+                        this.move_sheet_bool = true;
+                        if(this.$$('move-sheet')) {
+                            this.$$('move-sheet').navigated_to();
+                        }
                         break;
                     default:
                         this.character_select_bool = true;

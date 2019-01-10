@@ -140,17 +140,21 @@
                 scrubber_one_name: String,
                 scrubber_two_name: String
             },
-
+            
             listeners: {
                 'current_frame_changed': 'current_frame_changed',
                 'play_pause_tapped': 'play_pause_tapped',
                 'dialog_confirm': 'moves_selected'
             },
+            
+            ready: function() {
+                this.$.move_select_dialog.show();
+            },
 
             navigated_to: function() {
                 this.$.move_select_dialog.show();
             },
-
+            
             moves_selected: function(event) {
                 this.character_one = event.detail.character_one;
                 this.character_two = event.detail.character_two;
@@ -160,7 +164,7 @@
                 this.scrubber_one_name = this.move_one.name + ' Scrubber';
                 this.scrubber_two_name = this.move_two.name + ' Scrubber';
 
-                this.get_gif(this.character_one, this.move_one, this.move_one_cycle,this.$.move_one_container).then(function(gif) {
+                this.get_gif(this.convert_to_filename(this.character_one), this.move_one, this.move_one_cycle,this.$.move_one_container).then(function(gif) {
                     this.gif_one = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_one_total_frames = gif.get_length();
@@ -172,7 +176,7 @@
                     }.bind(this));
                 }.bind(this));
 
-                this.get_gif(this.character_two, this.move_two, this.move_two_cycle, this.$.move_two_container).then(function(gif) {
+                this.get_gif(this.convert_to_filename(this.character_two), this.move_two, this.move_two_cycle, this.$.move_two_container).then(function(gif) {
                     this.gif_two = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_two_total_frames = gif.get_length();
@@ -198,36 +202,11 @@
                 }
             },
 
-            ready: function() {
-                this.$.move_select_dialog.show();
-                // this.get_gif('fox', {name: 'Up Tilt', has_multiple: false}, 1 ,this.$.move_one_container).then(function(gif) {
-                //     this.gif_one = gif;
-                //     this.setup_gif(gif).then(function() {
-                //         this.move_one_total_frames = gif.get_length();
-                //         this.interval_one = setInterval(function() {
-                //             if(gif.get_playing()) {
-                //                 this.move_one_current_frame = gif.get_current_frame();
-                //             }
-                //         }.bind(this), 50)
-                //     }.bind(this));
-                // }.bind(this));
-
-                // this.get_gif('falco', {name: 'Forward Smash', has_multiple: false}, 1 , this.$.move_two_container).then(function(gif) {
-                //     this.gif_two = gif;
-                //     this.setup_gif(gif).then(function() {
-                //         this.move_two_total_frames = gif.get_length();
-                //         this.interval_two = setInterval(function() {
-                //             if(gif.get_playing()) {
-                //                 this.move_two_current_frame = gif.get_current_frame();
-                //             }
-                //         }.bind(this), 50)
-                //     }.bind(this));
-                // }.bind(this));
-
-                // this.move_one = {name: 'Up Tilt'};
-                // this.move_two = {name: 'Forward Smash'};
-                // this.scrubber_one_name = this.move_one.name + ' Scrubber';
-                // this.scrubber_two_name = this.move_two.name + ' Scrubber';
+            convert_to_filename: function(name) {
+                name = name.replace('.', '');
+                name = name.replace(' ', '_');
+                name = name.toLowerCase();
+                return name;
             },
 
             setup_gif: function(gif) {

@@ -136,7 +136,7 @@
             },
 
             characters_selected: function(event) {
-                event.cancelBubble(true);
+                event.cancelBubble = true;
                 this.characters_chosen = true;
                 for(var i in this.characters) {
                     if(this.characters[i].display_name == event.detail.character_one) {

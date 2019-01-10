@@ -7,6 +7,8 @@
 <link rel="import" href="../smash_card_content/smash_card_content.html">
 <link rel="import" href="../frame_scrubber/frame_scrubber.html">
 <link rel="import" href="../input_builder/input_builder.html">
+<link rel="import" href="../move_select_dialog/move_select_dialog.html">
+
 
 <script type="text/javascript" src="../../js/libgif-js/libgif.js"></script>
 
@@ -59,13 +61,15 @@
                 height: 30%;
             }
         </style>
+        <move-select-dialog id="move_select_dialog" characters="{{ characters }}" show_moves></move-select-dialog>
+
         <paper-card id="move_card">
             <div id="gif_container"></div>
             <div class="name_div">
                 <template is="dom-if" if="[[ move.has_multiples ]]">
                     <paper-icon-button id="left_arrow" icon="smash:chevron_left" on-tap="cycle_move"></paper-icon-button>
                 </template>
-                <div id="move_name" class="card-content">[[ get_move_name(cycle) ]]</div>
+                <div id="move_name" class="card-content">[[ name ]]</div>
                 <template is="dom-if" if="[[ move.has_multiples ]]">
                     <paper-icon-button id="right_arrow" icon="smash:chevron_right" on-tap="cycle_move"></paper-icon-button>
                 </template>
@@ -101,6 +105,10 @@
             ],
 
             properties: {
+                name: {
+                    type: String,
+                    value: ''
+                },
                 move: {
                    type: Object,
                    value: {},
@@ -123,29 +131,59 @@
             listeners: {
                 'current_frame_changed': 'current_frame_changed',
                 'play_pause_tapped': 'play_pause_tapped',
+                'dialog_confirm': 'moves_selected'
+            },
+            
+            ready: function() {
+                if(Object.keys(this.move).length == 0) {
+                    this.$.move_select_dialog.show();
+                }
+                else {
+                    this.name = this.move.name;
+                }
             },
 
-            ready: function() {
-                this.cycle_max = Object.keys(this.move.hitboxes).length;
+            moves_selected: function(event) {
+                for(var i in this.characters) {
+                    if(this.characters[i].display_name == event.detail.character_one) {
+                        for(var j in this.characters[i].moves) {
+                            if(this.characters[i].moves[j].name == event.detail.move_one) {
+                                this.character = this.characters[i].name;
+                                this.move = this.characters[i].moves[j];
+                                this.cycle_max = Object.keys(this.move.hitboxes).length;
+                                this.get_move_name(1);
+                            }
+                        }
+                    }
+                }
+            },
+
+            navigated_to: function() {
+                this.$.move_select_dialog.show();
             },
 
             move_changed: function() {
-                this.current_gif = undefined;
-                //this.clean_up_container(this.$.gif_container);
-                clearInterval(this.interval)
-                this.get_gif(this.move.character, this.move, this.cycle, this.$.gif_container).then(function(gif) {
-                    this.current_gif = gif;
-                    gif.load(function() {
-                        gif.play()
-                        this.total_frames = gif.get_length();
-                        gif.get_canvas().addEventListener('click', this.play_pause_tapped.bind(this));
-                        this.interval = setInterval(function() {
-                            if(gif.get_playing()) {
-                                this.$.frame_scrubber.current_frame = gif.get_current_frame();
-                            }
-                        }.bind(this), 50)
+                if(Object.keys(this.move).length > 0) {
+                    if(this.move.character) {
+                        this.character = this.move.character;
+                    }
+                    this.get_move_name(1);
+                    this.current_gif = undefined;
+                    clearInterval(this.interval)
+                    this.get_gif(this.character, this.move, this.cycle, this.$.gif_container).then(function(gif) {
+                        this.current_gif = gif;
+                        gif.load(function() {
+                            gif.play()
+                            this.total_frames = gif.get_length();
+                            gif.get_canvas().addEventListener('click', this.play_pause_tapped.bind(this));
+                            this.interval = setInterval(function() {
+                                if(gif.get_playing()) {
+                                    this.$.frame_scrubber.current_frame = gif.get_current_frame();
+                                }
+                            }.bind(this), 50)
+                        }.bind(this));
                     }.bind(this));
-                }.bind(this));
+                }
             },
 
             cycle_move: function(event) {
@@ -196,7 +234,7 @@
             },
 
             get_hitbox_categories: function() {
-                if(this.move) {
+                if(this.move && Object.keys(this.move).length > 0) {
                     return Object.keys(this.move.hitboxes);
                 }
             },
@@ -228,17 +266,17 @@
                 if(this.move.has_multiples) {
                     var suffix = ''
                     if(cycle == 2 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
-                        return this.move.name + ' - Upward';
+                        this.name = this.move.name + ' - Upward';
                     }
                     if(cycle == 3 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
-                        return this.move.name + ' - Downward';
+                        this.name = this.move.name + ' - Downward';
                     }
                     if(this.move.name == 'Jab') {
-                        return this.move.name + ' ' + cycle;
+                        this.name = this.move.name + ' ' + cycle;
                     }
-                    return this.move.name;
+                    this.name = this.move.name;
                 }
-                return this.move.name;
+                this.name = this.move.name;
             },
 
             current_frame_changed: function(event) {
