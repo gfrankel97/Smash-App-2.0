@@ -798,9 +798,8 @@ respectively.
                selectedItem = event.composedPath()[0];
             }
             else {
-               selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
+               selectedItem = Polymer.dom(event.detail.sourceEvent).node.target;
             }
-
             var selectedItemLabel = selectedItem.textContent.trim() || selectedItem.label;
 
             if (selectedItemLabel !== this.selectedItemLabel) {

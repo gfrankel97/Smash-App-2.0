@@ -12,7 +12,7 @@
             .character_card {
                 display: inline-block;
                 text-align: left;
-                max-height: 300px;
+                max-height: 200px;
                 width: 150px;
                 margin: 4px;
                 --paper-card-background-color: white;
@@ -38,8 +38,9 @@
         </style>
         <div id="centerer" class="layout horizontal wrap">
             <template is="dom-repeat" items="{{ characters }}" as="character">
-                <paper-card image="{{ character.character_select_image }}" class="character_card" elevation="4" on-tap="character_tapped">
-                    <!-- <div class="card-content character_text">{{ character.display_name }}</div> -->
+                <paper-card class="character_card" elevation="4" on-tap="character_tapped">
+                    <img src="{{ character.character_select_image }}">
+                    <div class="card-content character_text">{{ character.display_name }}</div>
                 </paper-card>
             </template>
         </div>

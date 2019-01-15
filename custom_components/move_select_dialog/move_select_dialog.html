@@ -93,9 +93,11 @@
 
             ready: function() {
                 this.async(function() {
+                    this.set('character_items', []);
                     for(var char in this.characters) {
                         this.push('character_items', this.characters[char].display_name)
                     }
+                    this.set('move_items', []);
                     for(var i in this.characters[0].moves) {
                         if(this.characters[0].moves[i].name != 'NO DISPLAY NAME') {
                             this.push('move_items', this.characters[0].moves[i].name);
