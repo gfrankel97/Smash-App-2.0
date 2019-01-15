@@ -33,6 +33,7 @@
         },
 
         clean_up_container: function(container) {
+            container.hidden = true;
             while(container.firstChild) {
                 container.removeChild(container.firstChild);
             }

@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 
 <link rel="import" href="../behaviors/gif_behavior.html">
 <link rel="import" href="../smash_card_content/smash_card_content.html">
@@ -21,7 +22,12 @@
             paper-card {
                 width: 100%;
             }
-
+            paper-progress {
+                width: 100%;
+                --paper-progress-container-color: black;
+                --paper-progress-active-color: white;
+                --paper-progress-indeterminate-cycle-duration: 1s;
+            }
             #move_name {
                 font-size: 22px;
                 padding-top: 16px;
@@ -58,12 +64,13 @@
             }
 
             #gif-container {
-                height: 30%;
+                max-height: 300px;
             }
         </style>
         <move-select-dialog id="move_select_dialog" characters="{{ characters }}" show_moves></move-select-dialog>
 
         <paper-card id="move_card">
+            <paper-progress id="loading_bar" indeterminate></paper-progress>
             <div id="gif_container"></div>
             <div class="name_div">
                 <template is="dom-if" if="[[ move.has_multiples ]]">
@@ -163,6 +170,7 @@
             },
 
             move_changed: function() {
+                this.$.loading_bar.hidden = false;
                 if(Object.keys(this.move).length > 0) {
                     if(this.move.character) {
                         this.character = this.move.character;
@@ -174,6 +182,8 @@
                     this.get_gif(this.character, this.move, this.cycle, this.$.gif_container).then(function(gif) {
                         this.current_gif = gif;
                         gif.load(function() {
+                            this.$.gif_container.hidden = false;
+                            this.$.loading_bar.hidden = true;
                             gif.play()
                             this.total_frames = gif.get_length();
                             gif.get_canvas().addEventListener('click', this.play_pause_tapped.bind(this));
@@ -200,7 +210,6 @@
                         this.cycle = 3;
                     }
                 }
-                this.$.frame_scrubber.toggle_play_pause_icon();
                 this.move_changed();
             },
 
@@ -211,7 +220,6 @@
                     'Up B': 2,
                     'Down B': 3
                 }
-                console.log(this.move)
                 var display_name = this.move.b_moves[moves_to_index[move]];
                 return display_name + ' - ' + this.move.name;
             },

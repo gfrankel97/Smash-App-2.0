@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+
 
 <link rel="import" href="../behaviors/gif_behavior.html">
 <link rel="import" href="../smash_card_content/smash_card_content.html">
@@ -17,6 +19,12 @@
             }
             paper-card {
                 width: 100%;
+            }
+            paper-progress {
+                width: 100%;
+                --paper-progress-container-color: black;
+                --paper-progress-active-color: white;
+                --paper-progress-indeterminate-cycle-duration: 1s;
             }
             .card-content {
                 padding: 0px;
@@ -77,6 +85,7 @@
         <move-select-dialog id="move_select_dialog" characters="{{ characters }}" two_characters show_moves></move-select-dialog>
 
         <paper-card>
+            <paper-progress id="loading_bar" indeterminate hidden></paper-progress>
             <div class="card-content">
                 <div class="header">
                     <div id="move_one_container" class="move_container move_one_image"></div>
@@ -156,6 +165,9 @@
             },
             
             moves_selected: function(event) {
+                this.gif_one_loaded = false;
+                this.gif_two_loaded = false;
+                this.$.loading_bar.hidden = false;
                 this.character_one = event.detail.character_one;
                 this.character_two = event.detail.character_two;
                 this.move_one = this.get_move_from_dialog(this.character_one, event.detail.move_one);
@@ -164,10 +176,17 @@
                 this.scrubber_one_name = this.move_one.name + ' Scrubber';
                 this.scrubber_two_name = this.move_two.name + ' Scrubber';
 
+
                 this.get_gif(this.convert_to_filename(this.character_one), this.move_one, this.move_one_cycle,this.$.move_one_container).then(function(gif) {
                     this.gif_one = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_one_total_frames = gif.get_length();
+                        this.gif_one_loaded = true;
+                        if(this.gif_one_loaded && this.gif_two_loaded) {
+                            this.$.loading_bar.hidden = true;
+                            this.$.move_one_container.hidden = false;
+                            this.$.move_two_container.hidden = false;
+                        }
                         this.interval_one = setInterval(function() {
                             if(gif.get_playing()) {
                                 this.move_one_current_frame = gif.get_current_frame();
@@ -180,6 +199,12 @@
                     this.gif_two = gif;
                     this.setup_gif(gif).then(function() {
                         this.move_two_total_frames = gif.get_length();
+                        this.gif_two_loaded = true;
+                        if(this.gif_one_loaded && this.gif_two_loaded) {
+                            this.$.loading_bar.hidden = true;
+                            this.$.move_one_container.hidden = false;
+                            this.$.move_two_container.hidden = false;
+                        }
                         this.interval_two = setInterval(function() {
                             if(gif.get_playing()) {
                                 this.move_two_current_frame = gif.get_current_frame();
