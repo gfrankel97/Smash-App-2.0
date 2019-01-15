@@ -151,7 +151,7 @@
                                 this.character = this.characters[i].name;
                                 this.move = this.characters[i].moves[j];
                                 this.cycle_max = Object.keys(this.move.hitboxes).length;
-                                this.get_move_name(1);
+                                this.set_move_name();
                             }
                         }
                     }
@@ -167,7 +167,8 @@
                     if(this.move.character) {
                         this.character = this.move.character;
                     }
-                    this.get_move_name(1);
+                    this.cycle_max = Object.keys(this.move.hitboxes).length;
+                    this.set_move_name();
                     this.current_gif = undefined;
                     clearInterval(this.interval)
                     this.get_gif(this.character, this.move, this.cycle, this.$.gif_container).then(function(gif) {
@@ -203,18 +204,16 @@
                 this.move_changed();
             },
 
-            set_move_name: function() {
-                this.$.move_name.innerHTML =  this.move.name;
-                if(this.move.name.lastIndexOf('B') == this.move.name.length - 1) {
-                    var moves_to_index = {
-                        'Neutral B': 0,
-                        'Forward B': 1,
-                        'Up B': 2,
-                        'Down B': 3
-                    }
-                    var display_name = this.move.b_moves[moves_to_index[this.move.name]];
-                    this.$.move_name.innerHTML = display_name + ' - ' + this.move.name;
+            get_b_move_name: function(move) {
+                var moves_to_index = {
+                    'Neutral B': 0,
+                    'Forward B': 1,
+                    'Up B': 2,
+                    'Down B': 3
                 }
+                console.log(this.move)
+                var display_name = this.move.b_moves[moves_to_index[move]];
+                return display_name + ' - ' + this.move.name;
             },
 
             to_display_name: function(name) {
@@ -262,21 +261,30 @@
                 return arr.join(', ');
             },
 
-            get_move_name: function(cycle) {
+            set_move_name: function() {
+                if(this.move.name.lastIndexOf('B') == this.move.name.length - 1) {
+                    console.log('HERE: ', this.get_b_move_name(this.move.name))
+                    this.set('name', this.get_b_move_name(this.move.name));
+                    this.$.move_name.innerHTML = this.get_b_move_name(this.move.name);
+                }
                 if(this.move.has_multiples) {
                     var suffix = ''
-                    if(cycle == 2 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
+                    if(this.cycle == 2 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
                         this.name = this.move.name + ' - Upward';
                     }
-                    if(cycle == 3 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
+                    else if(this.cycle == 3 && (this.move.name == 'Forward Smash' || this.move.name == 'Forward Tilt')) {
                         this.name = this.move.name + ' - Downward';
                     }
-                    if(this.move.name == 'Jab') {
-                        this.name = this.move.name + ' ' + cycle;
+                    else {
+                        this.name = this.move.name;
                     }
+                    if(this.move.name == 'Jab') {
+                        this.name = this.move.name + ' ' + this.cycle;
+                    }
+                }
+                else {
                     this.name = this.move.name;
                 }
-                this.name = this.move.name;
             },
 
             current_frame_changed: function(event) {

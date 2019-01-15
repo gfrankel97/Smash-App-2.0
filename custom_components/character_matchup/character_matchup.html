@@ -61,15 +61,17 @@
 
         <paper-card>
             <div class="card-content header">
-                <iron-image sizing="cover" class="shared_image_styles character_one_image" src="{{ character_one.character_select_image }}"></iron-image>
-                <div id="character_one_header" class="shared_header_styles">
-                    {{ character_one.display_name }}
-                </div>
-
-                <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_select_image }}"></iron-image>
-                <div id="character_two_header" class="shared_header_styles">
-                    {{ character_two.display_name }}
-                </div>
+                <template is="dom-if" if="[[ characters_chosen ]]">
+                    <iron-image sizing="cover" class="shared_image_styles character_one_image" src="{{ character_one.character_select_image }}"></iron-image>
+                    <div id="character_one_header" class="shared_header_styles">
+                        {{ character_one.display_name }}
+                    </div>
+    
+                    <iron-image sizing="cover" class="shared_image_styles character_two_image" src="{{ character_two.character_select_image }}"></iron-image>
+                    <div id="character_two_header" class="shared_header_styles">
+                        {{ character_two.display_name }}
+                    </div>
+                </template>
             </div>
             <div class="card-content">
                 <smash-card-content name="Speed" collapse_categories="[[ speed_categories ]]" tier_chip_one_letter="S" tier_chip_two_letter="S">
@@ -129,6 +131,7 @@
 
             ready: function() {
                 this.$.move_select_dialog.show();
+                console.log(this.character_one)
             },
 
             navigated_to: function() {
