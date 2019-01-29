@@ -1,0 +1,28 @@
+{
+  "name": "progress-bar",
+  "description": "Vanilla indeterminate progress bar",
+  "main": "progress-bar.html",
+  "keywords": [
+    "loading",
+    "progress",
+    "bar"
+  ],
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^v1.0.0-rc.11"
+  },
+  "demos": {
+    "Simple demo": "demo.html"
+  },
+  "homepage": "https://github.com/samuelli/progress-bar",
+  "version": "2.0.1",
+  "_release": "2.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.1",
+    "commit": "3355e98e5cd81d9ba2a36adb4359709c4a329e0a"
+  },
+  "_source": "https://github.com/samuelli/progress-bar.git",
+  "_target": "^2.0.1",
+  "_originalSource": "samuelli/progress-bar",
+  "_direct": true
+}
